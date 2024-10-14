@@ -4,14 +4,14 @@ const mongoose = require("mongoose");
 
 const app = express();
 
-/* mongoose
+mongoose
   .connect(config.MONGODB_URI)
   .then(() => {
-    logger.info("connected to MongoDB");
+    console.log("connected to MongoDB");
   })
   .catch((error) => {
-    logger.error("error connection to MongoDB", error.message);
-  }); */
+    console.error("error connection to MongoDB", error.message);
+  });
 
 app.use(express.static("build"));
 app.use(express.json());
