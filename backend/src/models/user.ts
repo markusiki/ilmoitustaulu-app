@@ -24,4 +24,4 @@ userShema.set('toJSON', {
 })
 
 
-export default model<IUser>('Announcement', userShema)
+export default model<IUser>('User', userShema)
