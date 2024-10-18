@@ -1,6 +1,7 @@
 import config from './utils/config'
 import express, { Express, Request, Response } from 'express'
 import mongoose from 'mongoose'
+import announcementRouter from './controllers/announcement';
 
 const app: Express = express();
 
@@ -16,8 +17,8 @@ mongoose
 app.use(express.static("build"));
 app.use(express.json());
 
-// Add routes here e.g
-// app.use('/api/notices', noticeBoardRouter)
+
+app.use('/api/announcement', announcementRouter)
 
 export default app
 
