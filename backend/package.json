@@ -2,16 +2,20 @@
   "name": "backend",
   "version": "1.0.0",
   "description": "ilmoitustaulu-app backend ",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
-    "dev": "nodemon ./index.js",
-    "start": "node ./index.js",
+    "start": "node dist/index.js",
+    "dev": "ts-node-dev src/index.ts",
     "build:ui": "rm -rf build && cd ../frontend && npm install && npm run build && cp -r build ../backend"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "nodemon": "^3.1.7"
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.7.6",
+    "ts-node": "^10.9.2",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.6.3"
   },
   "dependencies": {
     "dotenv": "^16.4.5",
