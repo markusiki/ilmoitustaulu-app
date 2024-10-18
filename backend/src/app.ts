@@ -1,11 +1,11 @@
-const config = require("./utils/config");
-const express = require("express");
-const mongoose = require("mongoose");
+import config from './utils/config'
+import express, { Express, Request, Response } from 'express'
+import mongoose from 'mongoose'
 
-const app = express();
+const app: Express = express();
 
 mongoose
-  .connect(config.MONGODB_URI)
+  .connect(config.MONGODB_URI!)
   .then(() => {
     console.log("connected to MongoDB");
   })
@@ -19,4 +19,6 @@ app.use(express.json());
 // Add routes here e.g
 // app.use('/api/notices', noticeBoardRouter)
 
-module.exports = app;
+export default app
+
+
