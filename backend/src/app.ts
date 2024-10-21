@@ -18,12 +18,15 @@ mongoose
 
 app.use(express.json());
 
+//APIs
+app.use('/api/announcements', announcementRouter)
+
 app.use('/', (req, res, next) => {
-  if (req.url.startsWith('/announcements')) {
-    app.use(express.static(path.join(__dirname, '../build/announcementBoard')))
-  }
   if (req.url.startsWith('/new')) {
     app.use(express.static(path.join(__dirname, '../build/new')))
+  }
+  if (req.url.startsWith('/announcements')) {
+    app.use(express.static(path.join(__dirname, '../build/ws')))
   }
   if (req.url.startsWith('/controller')) {
     app.use(express.static(path.join(__dirname, '../build/controller')))
@@ -33,14 +36,12 @@ app.use('/', (req, res, next) => {
 
 
 //Routes
-app.use('/announcements', express.static('build/announcementBoard'))
+app.use('/announcements', express.static('build/ws'))
 app.use('/new', express.static('build/new'));
 app.use('/controller', express.static('build/controller'));
 
 
-//APIs
-app.use('/api/announcement', announcementRouter)
-
 export default app
+
 
 

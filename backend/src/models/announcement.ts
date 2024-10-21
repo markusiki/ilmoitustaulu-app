@@ -20,7 +20,7 @@ const announcementShema = new Schema<IAnnouncement>({
     required: true
   },
   picture: String
-})
+}, { timestamps: true})
 
 announcementShema.set('toJSON', {
   transform: (document, returnedObject) => {
