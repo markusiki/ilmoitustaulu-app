@@ -12,7 +12,8 @@ const userShema = new Schema<IUser>({
   },
   email: String,
   phone: String
-})
+}, { timestamps: true })
+
 
 userShema.set('toJSON', {
   transform: (document, returnedObject) => {

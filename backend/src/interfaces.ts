@@ -13,3 +13,10 @@ export interface IUser {
   email?: string
   phone?: string
 }
+
+export interface IAdvertisement {
+  file: {
+    data: BinaryData
+    type: string
+  }
+}
