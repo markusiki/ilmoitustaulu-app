@@ -1,9 +1,9 @@
-import express, { Express } from "express";
+import express, { Express } from 'express'
 import wss from '../index'
-import { IAnnouncement } from "../interfaces";
+import { IAnnouncement } from '../interfaces'
 import Announcement from '../models/announcement'
-import {sendContentToAllClients} from './webSocketController'
-import { HydratedDocument } from "mongoose";
+import { sendContentToAllClients } from './webSocketController'
+import { HydratedDocument } from 'mongoose'
 
 const announcementRouter = express.Router()
 
@@ -34,8 +34,7 @@ announcementRouter.post('/add', async (req, res) => {
     const savedAnnouncement = await newAnnouncement.save()
     res.status(200).json(savedAnnouncement)
     sendContentToAllClients()
-
-  } catch(error) {
+  } catch (error) {
     console.log(error)
     res.status(400).json()
   }
