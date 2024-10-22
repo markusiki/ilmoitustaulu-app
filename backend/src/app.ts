@@ -3,6 +3,7 @@ import express, { Express, Request, Response } from 'express'
 import mongoose from 'mongoose'
 import announcementRouter from './controllers/announcement';
 import path from 'path';
+import setCleaner from './services/cleaner';
 
 const app: Express = express();
 
@@ -39,6 +40,8 @@ app.use('/', (req, res, next) => {
 app.use('/announcements', express.static('build/ws'))
 app.use('/new', express.static('build/new'));
 app.use('/controller', express.static('build/controller'));
+
+setCleaner()
 
 
 export default app
