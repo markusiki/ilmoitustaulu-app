@@ -1,6 +1,7 @@
 import { Server as WebSocketServer, WebSocket, RawData } from 'ws';
 import { v4 as uuidv4 } from 'uuid';
 import Announcement from '../models/announcement';
+import { IAnnouncement } from '../interfaces';
 
 
 interface Client {
@@ -38,7 +39,7 @@ const eventTypes = {
 };
 
 // Broadcast announcement to new client
-const sendAnnouncements = async (connection: WebSocket) => {
+const sendContent = async (connection: WebSocket) => {
   try {
     const announcements = await Announcement.find({})
     connection.send(JSON.stringify(announcements))
@@ -48,6 +49,8 @@ const sendAnnouncements = async (connection: WebSocket) => {
     console.log(error)
   }
 }
+
+
 
 // Broadcast a message to all connected clients
 export const sendContentToAllClients = async () => {
@@ -77,7 +80,9 @@ const processReceivedMessage = async (message: RawData, userId: string) => {
   }
   if ((dataFromClient.type === eventTypes.ANNOUNCEMENT_DELETE)) {
     try {
-      await Announcement.findByIdAndDelete(dataFromClient.id)
+      const deletedAnnouncement = await Announcement.findByIdAndDelete(dataFromClient.id)
+          
+      
     }
     catch (error) {
       console.log(error)
@@ -102,7 +107,7 @@ export const setupWebSocket = (wss: WebSocketServer) => {
     
     clients[userId] = connection;
     console.log(`${userId} connected.`);
-    sendAnnouncements(connection)
+    sendContent(connection)
     
     connection.on('message', (message) => processReceivedMessage(message, userId));
     connection.on('close', () => handleClientDisconnection(userId));
