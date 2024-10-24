@@ -1,19 +1,31 @@
 import Notice from "./Notice";
+import { Card } from "react-bootstrap";
+
+interface Announcement {
+  title: string;
+  description: string;
+}
 
 interface SectionProps {
   title: string;
-  announcements: { title: string; description: string }[];
+  announcements: Announcement[];
 }
 
 export default function Section({ title, announcements }: SectionProps) {
   return (
-    <div>
-      <h2 className="text-2xl text-black mb-5">{title}</h2>
-      <div className="grid grid-cols-2 gap-4">
-        {announcements.map((announcement, index) => (
-          <Notice key={index} title={announcement.title} description={announcement.description} />
-        ))}
-      </div>
-    </div>
+    <Card className="mb-4">
+      <Card.Header className="bg-primary text-white">
+        <h2>{title}</h2>
+      </Card.Header>
+      <Card.Body>
+        {announcements.length > 0 ? (
+          announcements.map((announcement, index) => (
+            <Notice key={index} title={announcement.title} description={announcement.description} />
+          ))
+        ) : (
+          <p>No announcements available.</p>
+        )}
+      </Card.Body>
+    </Card>
   );
 }

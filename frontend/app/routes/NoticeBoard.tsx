@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Container, Row, Col, Button, Modal } from "react-bootstrap";
 import Section from "./Section";
 import AddAnnouncementForm from "./AddAnnouncementForm";
 
@@ -7,54 +8,72 @@ interface Announcement {
   description: string;
 }
 
-// Helper function to generate predefined dummy announcements
-const dummyAnnouncements: Announcement[] = [
-  { title: "Special Discount", description: "Get up to 30% off on select products!" },
-  { title: "Customer Feedback", description: "We value your feedback on our new services." },
-  { title: "Exclusive Sale", description: "Exclusive discounts for VIP members only." },
-  { title: "Policy Update", description: "Read our updated privacy policy." },
-  { title: "New Product Launch", description: "Check out our latest gadgets." },
-];
-
-const getRandomAnnouncements = (count: number): Announcement[] => {
-  return Array.from({ length: count }, () => {
-    const randomIndex = Math.floor(Math.random() * dummyAnnouncements.length);
-    return dummyAnnouncements[randomIndex];
-  });
-};
-
 export default function NoticeBoard() {
-  // Simplified initial state setup with dummy announcements
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [announcements, setAnnouncements] = useState<Record<string, Announcement[]>>({
-    Tarjoukset: getRandomAnnouncements(4),
-    Asiakastoiveet: getRandomAnnouncements(8),
-    "Myynti-ilmoitukset": getRandomAnnouncements(6),
+    Tarjoukset: [],
+    Asiakastoiveet: [],
+    Myynti: [],
   });
 
   const handleAddAnnouncement = (newAnnouncement: {
-    category: "Asiakastoive" | "Myynti-ilmoitus";
+    category: "Asiakastoiveet" | "Myynti";
     title: string;
     content: string;
   }) => {
-    // Initialize the category as an empty array if it doesn't exist yet
-    setAnnouncements((prevAnnouncements) => ({
-      ...prevAnnouncements,
-      [newAnnouncement.category]: [
-        ...(prevAnnouncements[newAnnouncement.category] || []), // Ensure it's an array
+    setAnnouncements((prevAnnouncements) => {
+      const updatedCategory = [
+        ...(prevAnnouncements[newAnnouncement.category] || []),
         { title: newAnnouncement.title, description: newAnnouncement.content },
-      ],
-    }));
+      ];
+
+      return {
+        ...prevAnnouncements,
+        [newAnnouncement.category]: updatedCategory,
+      };
+    });
+
+    setIsModalOpen(false);
   };
 
   return (
-    <div className="container mx-auto mt-10">
-      <h1 className="text-4xl font-bold text-center text-black mb-10">Ilmoitustaulu</h1>
-      <div className="grid grid-cols-3 gap-10">
-        <Section title="Tarjoukset" announcements={announcements.Tarjoukset} />
-        <Section title="Asiakastoiveet" announcements={announcements.Asiakastoiveet} />
-        <Section title="Myynti-ilmoitukset" announcements={announcements["Myynti-ilmoitukset"]} />
+    <Container fluid>
+      <h1 className="text-center mb-4">Ilmoitustaulu</h1>
+
+      {/* Main Grid Layout with React Bootstrap */}
+      <Row className="mb-4">
+        <Col md={4}>
+          <Section title="Tarjoukset" announcements={announcements.Tarjoukset} />
+        </Col>
+        <Col md={8}>
+          <Section title="Asiakastoiveet" announcements={announcements.Asiakastoiveet} />
+        </Col>
+      </Row>
+
+      <Row>
+        <Col md={4} className="d-flex flex-column align-items-center justify-content-center">
+          <p className="text-center">Lisää oma ilmoituksesi skannaamalla QR-koodi</p>
+          <img src="QR_Test.svg" alt="QR Code" className="img-fluid" style={{ width: "100px" }} />
+        </Col>
+        <Col md={8}>
+          <Section title="Myynti-ilmoitukset" announcements={announcements.Myynti} />
+        </Col>
+      </Row>
+
+      <div className="text-center mt-4">
+        <Button variant="primary" onClick={() => setIsModalOpen(true)}>
+          Add New Announcement
+        </Button>
       </div>
-      <AddAnnouncementForm onAddAnnouncement={handleAddAnnouncement} />
-    </div>
+
+      <Modal show={isModalOpen} onHide={() => setIsModalOpen(false)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Add a New Announcement</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <AddAnnouncementForm onAddAnnouncement={handleAddAnnouncement} />
+        </Modal.Body>
+      </Modal>
+    </Container>
   );
 }

@@ -1,7 +1,8 @@
 import { useState, ChangeEvent, FormEvent } from "react";
+import { Form, Button } from "react-bootstrap";
 
 interface AnnouncementFormData {
-  category: "Asiakastoive" | "Myynti-ilmoitus";
+  category: "Asiakastoiveet" | "Myynti";
   announcer: string;
   contactInfo: string;
   title: string;
@@ -14,7 +15,7 @@ interface AddAnnouncementFormProps {
 
 export default function AddAnnouncementForm({ onAddAnnouncement }: AddAnnouncementFormProps) {
   const [formData, setFormData] = useState<AnnouncementFormData>({
-    category: "Asiakastoive",
+    category: "Asiakastoiveet",
     announcer: "",
     contactInfo: "",
     title: "",
@@ -33,7 +34,7 @@ export default function AddAnnouncementForm({ onAddAnnouncement }: AddAnnounceme
     e.preventDefault();
     onAddAnnouncement(formData);
     setFormData({
-      category: "Asiakastoive",
+      category: "Asiakastoiveet",
       announcer: "",
       contactInfo: "",
       title: "",
@@ -42,74 +43,82 @@ export default function AddAnnouncementForm({ onAddAnnouncement }: AddAnnounceme
   };
 
   return (
-    <div className="container mx-auto mt-5 p-5 bg-gray-200 rounded-lg max-w-md">
-      <h2 className="text-2xl text-center mb-4 text-black font-bold">Lisää ilmoitus ilmoitustaululle</h2>
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+    <Form onSubmit={handleSubmit}>
+      <Form.Group controlId="category">
+        <Form.Label>Ilmoitusluokka</Form.Label>
         <div>
-          <label className="text-black">Ilmoitusluokka</label>
-          <div className="flex gap-4 mt-1">
-            <label className="text-black">
-              <input
-                type="radio"
-                name="category"
-                value="Asiakastoive"
-                checked={formData.category === "Asiakastoive"}
-                onChange={handleInputChange}
-                className="mr-1"
-              />
-              Asiakastoive
-            </label>
-            <label className="text-black">
-              <input
-                type="radio"
-                name="category"
-                value="Myynti-ilmoitus"
-                checked={formData.category === "Myynti-ilmoitus"}
-                onChange={handleInputChange}
-                className="mr-1"
-              />
-              Myynti-ilmoitus
-            </label>
-          </div>
+          <Form.Check
+            inline
+            type="radio"
+            name="category"
+            label="Asiakastoiveet"
+            value="Asiakastoiveet"
+            checked={formData.category === "Asiakastoiveet"}
+            onChange={handleInputChange}
+          />
+          <Form.Check
+            inline
+            type="radio"
+            name="category"
+            label="Myynti"
+            value="Myynti"
+            checked={formData.category === "Myynti"}
+            onChange={handleInputChange}
+          />
         </div>
-        <input
+      </Form.Group>
+
+      <Form.Group controlId="announcer">
+        <Form.Label>Ilmoittaja</Form.Label>
+        <Form.Control
           type="text"
           name="announcer"
           placeholder="Ilmoittaja"
           value={formData.announcer}
           onChange={handleInputChange}
-          className="p-2 rounded"
           required
         />
-        <input
+      </Form.Group>
+
+      <Form.Group controlId="contactInfo">
+        <Form.Label>Yhteystiedot (valinnainen)</Form.Label>
+        <Form.Control
           type="text"
           name="contactInfo"
           placeholder="Yhteystiedot (valinnainen)"
           value={formData.contactInfo}
           onChange={handleInputChange}
-          className="p-2 rounded"
         />
-        <input
+      </Form.Group>
+
+      <Form.Group controlId="title">
+        <Form.Label>Ilmoituksen otsikko</Form.Label>
+        <Form.Control
           type="text"
           name="title"
           placeholder="Ilmoituksen otsikko"
           value={formData.title}
           onChange={handleInputChange}
-          className="p-2 rounded"
           required
         />
-        <textarea
+      </Form.Group>
+
+      <Form.Group controlId="content">
+        <Form.Label>Ilmoituksen sisältö</Form.Label>
+        <Form.Control
+          as="textarea"
           name="content"
           placeholder="Ilmoituksen sisältö"
           value={formData.content}
           onChange={handleInputChange}
-          className="p-2 rounded h-32"
           required
+          rows={3}
         />
-        <button type="submit" className="bg-blue-600 text-white p-2 rounded">
-          Lähetä
-        </button>
-      </form>
-    </div>
+      </Form.Group>
+
+      <Button variant="primary" type="submit" className="mt-3">
+        Lähetä
+      </Button>
+    </Form>
   );
 }
