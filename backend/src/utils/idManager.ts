@@ -35,7 +35,12 @@ export const removeIdFromList = (id: string) => {
   )
 }
 
-export const sendNewAnnouncementIdToClients = () => {
+export const sendNewAnnouncementIdToClients = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const id = createNewId()
   sendContentToAllClients(id)
+  next()
 }
