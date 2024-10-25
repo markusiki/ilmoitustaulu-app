@@ -4,7 +4,7 @@ import mongoose from 'mongoose'
 import announcementRouter from './controllers/announcement'
 import path from 'path'
 import setCleaner from './services/cleaner'
-import { sendNewAnnouncementIdToClients } from './utils/idManager'
+import { IdValidator, sendNewAnnouncementIdToClients } from './utils/idManager'
 
 const app: Express = express()
 
@@ -37,7 +37,11 @@ app.use('/', (req, res, next) => {
 })
 
 app.use('/announcements', express.static('build/ws'))
-app.use('/new', sendNewAnnouncementIdToClients, express.static('build/new'))
+app.use(
+  '/new/:id',
+  [IdValidator, sendNewAnnouncementIdToClients],
+  express.static('build/new')
+)
 app.use('/controller', express.static('build/controller'))
 
 setCleaner()
