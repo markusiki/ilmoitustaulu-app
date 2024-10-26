@@ -1,8 +1,10 @@
 import { Server as WebSocketServer, WebSocket, RawData } from 'ws'
 import { v4 as uuidv4 } from 'uuid'
 import Announcement from '../models/announcement'
-import { IAnnouncement } from '../interfaces'
-import { createNewId } from '../utils/idManager'
+import Advertisement from '../models/advertisement'
+import { DataToClients, IAdvertisement, IAnnouncement } from '../interfaces'
+import { createNewId, sendNewAnnouncementIdToClients } from '../utils/idManager'
+import { ObjectId } from 'mongoose'
 
 interface Client {
   readyState: number
@@ -14,6 +16,9 @@ interface DataFromClient {
   username: string
   content?: string
   id?: string
+  data?: {
+    file: Blob
+  }
 }
 
 interface JsonData {
@@ -32,7 +37,7 @@ const users: { [userId: string]: DataFromClient } = {}
 
 // Define event types
 const eventTypes = {
-  ADVERTISEMENT_ADD: 'advertisementtadd',
+  ADVERTISEMENT_ADD: 'advertisementadd',
   ADVERTISEMENT_DELETE: 'advertisementdelete',
   ANNOUNCEMENT_DELETE: 'announcementdelete'
 }
@@ -53,12 +58,23 @@ const sendContent = async (connection: WebSocket) => {
   }
 }
 
+const sendError = async (connection: WebSocket, message: string) => {
+  const errorMessage = {
+    type: 'error',
+    data: {
+      message: message
+    }
+  }
+  try {
+    connection.send(JSON.stringify(errorMessage))
+  } catch (error) {
+    console.log(error)
+  }
+}
+
 // Broadcast a message to all connected clients
-export const sendContentToAllClients = async (newAnnouncmentId?: string) => {
-  const announcements = await Announcement.find({})
-  const data = newAnnouncmentId
-    ? { announcmentId: newAnnouncmentId }
-    : { announcements: announcements }
+export const sendContentToAllClients = async (data: DataToClients['types']) => {
+  console.log('sendContentToAllClients called')
   for (const userId in clients) {
     const client = clients[userId]
     if (client.readyState === WebSocket.OPEN) {
@@ -68,27 +84,79 @@ export const sendContentToAllClients = async (newAnnouncmentId?: string) => {
 }
 
 // Handle content update
-const processReceivedMessage = async (message: RawData, userId: string) => {
+const processReceivedMessage = async (
+  message: RawData,
+  connection: WebSocket
+) => {
   const dataFromClient: DataFromClient = JSON.parse(message.toString())
   const json: JsonData = { type: dataFromClient.type }
 
   if (dataFromClient.type === eventTypes.ADVERTISEMENT_ADD) {
-    // adds advertisement to database
+    try {
+      const dataFile = dataFromClient.data!.file
+      const newAdvertisement = new Advertisement({
+        file: dataFile
+      })
+
+      const receivedAdvertisement = await newAdvertisement.save()
+      if (receivedAdvertisement) {
+        const advertisementToSend: DataToClients['advertisementAdd'] = {
+          type: 'advertisementadd',
+          data: {
+            advertisement: {
+              _id: receivedAdvertisement._id,
+              file: receivedAdvertisement.file
+            }
+          }
+        }
+        sendContentToAllClients(advertisementToSend)
+      }
+    } catch (error) {
+      const message = `Error happened durin advertisement saving, error: ${error}`
+      sendError(connection, message)
+      console.log(error)
+    }
   }
   if (dataFromClient.type === eventTypes.ADVERTISEMENT_DELETE) {
-    // deletes advertisement from database
+    try {
+      const deletedAdvertisement = await Advertisement.findByIdAndDelete(
+        dataFromClient.id
+      )
+      if (deletedAdvertisement) {
+        const advertisementToDelete: DataToClients['advertisementDelete'] = {
+          type: 'advertisementdelete',
+          data: {
+            id: deletedAdvertisement._id
+          }
+        }
+        sendContentToAllClients(advertisementToDelete)
+      }
+    } catch (error) {
+      const message = `Error happened during advertisement deletion, error: ${error}`
+      sendError(connection, message)
+      console.log(error)
+    }
   }
   if (dataFromClient.type === eventTypes.ANNOUNCEMENT_DELETE) {
     try {
       const deletedAnnouncement = await Announcement.findByIdAndDelete(
         dataFromClient.id
       )
+      if (deletedAnnouncement) {
+        const announcementToDelete: DataToClients['announcementDelete'] = {
+          type: 'announcementdelete',
+          data: {
+            id: deletedAnnouncement._id
+          }
+        }
+        sendContentToAllClients(announcementToDelete)
+      }
     } catch (error) {
+      const message = `Error happened during announcement deletion, error: ${error}`
+      sendError(connection, message)
       console.log(error)
     }
   }
-
-  sendContentToAllClients()
 }
 
 // Handle disconnection of a client
@@ -109,7 +177,7 @@ export const setupWebSocket = (wss: WebSocketServer) => {
     sendContent(connection)
 
     connection.on('message', (message) =>
-      processReceivedMessage(message, userId)
+      processReceivedMessage(message, connection)
     )
     connection.on('close', () => handleClientDisconnection(userId))
   })
