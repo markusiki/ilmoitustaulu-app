@@ -1,12 +1,15 @@
-import { Schema, model } from "mongoose"
-import { IAdvertisement } from "../interfaces"
+import { Schema, model } from 'mongoose'
+import { IAdvertisement } from '../interfaces'
 
-const advertisementSchema = new Schema<IAdvertisement>({
-  file: {
-    data: Buffer,
-    type: String
-  }
-}, { timestamps: true})
+const advertisementSchema = new Schema<IAdvertisement>(
+  {
+    file: {
+      data: Blob,
+      type: String
+    }
+  },
+  { timestamps: true }
+)
 
 advertisementSchema.set('toJSON', {
   transform: (document, returnedObject) => {
@@ -14,8 +17,7 @@ advertisementSchema.set('toJSON', {
     delete returnedObject._id
     delete returnedObject.__v
   },
-  virtuals: true,
+  virtuals: true
 })
-
 
 export default model<IAdvertisement>('Advertisement', advertisementSchema)

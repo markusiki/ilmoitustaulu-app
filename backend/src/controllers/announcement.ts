@@ -1,5 +1,5 @@
 import express from 'express'
-import { IAnnouncement } from '../interfaces'
+import { DataToClients, IAnnouncement } from '../interfaces'
 import Announcement from '../models/announcement'
 import { sendContentToAllClients } from './webSocketController'
 import mongoose, { HydratedDocument } from 'mongoose'
@@ -30,16 +30,22 @@ announcementRouter.post('/add/:id', IdValidator, async (req, res) => {
       contact_info: body.contact_info,
       title: body.title,
       content: body.content,
-      picture: body.picture
+      file: body.file
     })
 
     const savedAnnouncement = await newAnnouncement.save()
-    res.status(200).json(savedAnnouncement)
+    const announcementToSend: DataToClients['annnouncementAdd'] = {
+      type: 'announcementadd',
+      data: {
+        announcement: savedAnnouncement
+      }
+    }
+    res.status(200).json({ message: 'Saved successfully' })
     removeIdFromList(id)
-    sendContentToAllClients()
+    sendContentToAllClients(announcementToSend)
   } catch (error) {
     console.log(error)
-    res.status(400).json()
+    res.status(400).json({ error: 'Error in saving announcement' })
   }
 })
 
