@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express'
 import mongoose from 'mongoose'
 import Announcement from '../models/announcement'
 import { sendContentToAllClients } from '../controllers/webSocketController'
+import { DataToClients } from '../interfaces'
 
 let idList: string[] = []
 
@@ -11,6 +12,7 @@ export const IdValidator = async (
   next: NextFunction
 ): Promise<void> => {
   const id = req.params.id
+  console.log('id: ', id)
   if (!idList.includes(id)) {
     res.status(401).json({ error: 'invalid id' })
     return
@@ -40,7 +42,12 @@ export const sendNewAnnouncementIdToClients = (
   res: Response,
   next: NextFunction
 ) => {
-  const id = createNewId()
-  sendContentToAllClients(id)
+  const newAnnouncementId: DataToClients['newAnnouncementId'] = {
+    type: 'newannouncementid',
+    data: {
+      id: createNewId()
+    }
+  }
+  sendContentToAllClients(newAnnouncementId)
   next()
 }
