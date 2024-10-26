@@ -1,12 +1,14 @@
 import config from './utils/config'
-import express, { Express, Request, Response } from 'express'
+import express, { Express, NextFunction, Request, Response } from 'express'
 import mongoose from 'mongoose'
 import announcementRouter from './controllers/announcement'
 import path from 'path'
 import setCleaner from './services/cleaner'
 import { IdValidator, sendNewAnnouncementIdToClients } from './utils/idManager'
+import { checkTrailingSlash } from './utils/middleware'
 
 const app: Express = express()
+app.enable('strict routing')
 
 mongoose
   .connect(config.MONGODB_URI!)
@@ -23,26 +25,54 @@ app.use(express.json())
 app.use('/api/announcements', announcementRouter)
 
 //Routes
-app.use('/', (req, res, next) => {
+/* app.use((req, res, next) => {
+  console.log('url: ', req.url)
+  console.log('path: ', req.path)
+  console.log('baseURL: ', req.baseUrl)
+  console.log(req.params.id)
   if (req.url.startsWith('/new')) {
-    app.use(express.static(path.join(__dirname, '../build/new')))
+    console.log('called')
+    app.use(
+      [
+        IdValidator,
+        sendNewAnnouncementIdToClients,
+        (req: Request, res: Response, next: NextFunction) => {
+          console.log('second called')
+          next()
+        }
+      ],
+      express.static(path.join(__dirname, '../build/new'), { redirect: false })
+    )
   }
   if (req.url.startsWith('/announcements')) {
     app.use(express.static(path.join(__dirname, '../build/ws')))
   }
   if (req.url.startsWith('/controller')) {
-    app.use(express.static(path.join(__dirname, '../build/controller')))
+    app.use(
+      express.static(path.join(__dirname, '../build/controller'), {
+        redirect: false
+      })
+    )
   }
   next()
-})
+}) */
 
-app.use('/announcements', express.static('build/ws'))
 app.use(
   '/new/:id',
-  [IdValidator, sendNewAnnouncementIdToClients],
-  express.static('build/new')
+  checkTrailingSlash,
+  IdValidator,
+  sendNewAnnouncementIdToClients,
+  express.static(path.join(__dirname, '../build/newannouncement'))
 )
-app.use('/controller', express.static('build/controller'))
+app.use(
+  '/newannouncement',
+  express.static(path.join(__dirname, '../build/newannouncement'))
+)
+app.use(
+  '/controller',
+  express.static(path.join(__dirname, '../build/controllerview'))
+)
+app.use(express.static(path.join(__dirname, '../build/ws')))
 
 setCleaner()
 
