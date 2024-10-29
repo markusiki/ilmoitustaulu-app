@@ -3,9 +3,11 @@
 import Announcement from '../models/announcement'
 import { IAnnouncement } from '../interfaces'
 import { setInterval } from 'timers'
+import { sendContentToAllClients } from '../controllers/webSocketController'
 
 const maxAgeDays = 7
 const maxAnnouncementsCount = 18
+const maxCustomerWishCount = 18
 const intervalDays = 1
 const delay = intervalDays * 86400000
 
@@ -18,15 +20,19 @@ const deleteOldAnnouncements = async (
   try {
     const documentsToDelete = await Announcement.find({
       category: category,
-      createdAt: { $lt: ageLimit },
+      createdAt: { $lt: ageLimit }
     })
       .limit(limit)
       .exec()
 
     const deleteIds = documentsToDelete.map((doc) => doc._id)
     await Announcement.deleteMany({
-      _id: { $in: deleteIds },
+      _id: { $in: deleteIds }
     }).exec()
+    sendContentToAllClients({
+      type: 'announcementdelete',
+      data: { id: deleteIds.toString() }
+    })
   } catch (error) {
     console.log('error deleting old announcements: ', error)
   }
@@ -34,17 +40,12 @@ const deleteOldAnnouncements = async (
 
 const cleanAnnouncements = async () => {
   const customerWishesCount = await Announcement.countDocuments({
-    category: 'asiakastoive',
+    category: 'asiakastoive'
   }).exec()
   const saleAnnouncementsCount = await Announcement.countDocuments({
-    category: 'myynti-ilmoitus',
+    category: 'myynti-ilmoitus'
   }).exec()
-  console.log(
-    'customerWishesCount: ',
-    customerWishesCount,
-    'saleAnnouncementsCount: ',
-    saleAnnouncementsCount
-  )
+
   if (customerWishesCount > maxAnnouncementsCount) {
     const limit = customerWishesCount - maxAnnouncementsCount
     deleteOldAnnouncements('asiakastoive', limit)
