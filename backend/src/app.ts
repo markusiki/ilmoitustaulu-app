@@ -25,38 +25,6 @@ app.use(express.json())
 app.use('/api/announcements', announcementRouter)
 
 //Routes
-/* app.use((req, res, next) => {
-  console.log('url: ', req.url)
-  console.log('path: ', req.path)
-  console.log('baseURL: ', req.baseUrl)
-  console.log(req.params.id)
-  if (req.url.startsWith('/new')) {
-    console.log('called')
-    app.use(
-      [
-        IdValidator,
-        sendNewAnnouncementIdToClients,
-        (req: Request, res: Response, next: NextFunction) => {
-          console.log('second called')
-          next()
-        }
-      ],
-      express.static(path.join(__dirname, '../build/new'), { redirect: false })
-    )
-  }
-  if (req.url.startsWith('/announcements')) {
-    app.use(express.static(path.join(__dirname, '../build/ws')))
-  }
-  if (req.url.startsWith('/controller')) {
-    app.use(
-      express.static(path.join(__dirname, '../build/controller'), {
-        redirect: false
-      })
-    )
-  }
-  next()
-}) */
-
 app.use(
   '/new/:id',
   checkTrailingSlash,
@@ -69,7 +37,7 @@ app.use(
   express.static(path.join(__dirname, '../build/newannouncement'))
 )
 app.use(
-  '/controller',
+  '/controllerview',
   express.static(path.join(__dirname, '../build/controllerview'))
 )
 app.use(express.static(path.join(__dirname, '../build/ws')))
