@@ -2,9 +2,8 @@ import { Server as WebSocketServer, WebSocket, RawData } from 'ws'
 import { v4 as uuidv4 } from 'uuid'
 import Announcement from '../models/announcement'
 import Advertisement from '../models/advertisement'
-import { DataToClients, IAdvertisement, IAnnouncement } from '../interfaces'
-import { createNewId, sendNewAnnouncementIdToClients } from '../utils/idManager'
-import { ObjectId } from 'mongoose'
+import { DataToClients, InitialDataToClient } from '../interfaces'
+import { getAnnouncementId } from '../utils/idManager'
 
 interface Client {
   readyState: number
@@ -47,11 +46,11 @@ const sendContent = async (connection: WebSocket) => {
   try {
     const announcements = await Announcement.find({})
     const advertisements = await Advertisement.find({})
-    const newAnnouncmentId = createNewId()
-    const data = {
+    const newAnnouncmentId = getAnnouncementId()
+    const data: InitialDataToClient = {
       announcements: announcements,
       advertisements: advertisements,
-      newAnnouncmentId: newAnnouncmentId
+      announcmentId: newAnnouncmentId
     }
     connection.send(JSON.stringify(data))
   } catch (error) {

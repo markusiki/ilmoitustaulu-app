@@ -30,6 +30,12 @@ export interface IAdvertisement {
   }
 }
 
+export interface InitialDataToClient {
+  announcements: IAnnouncement[]
+  advertisements: IAdvertisement[]
+  announcmentId: string
+}
+
 export interface DataToClients {
   advertisementAdd: {
     type: 'advertisementadd'
