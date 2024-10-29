@@ -3,7 +3,7 @@ import { DataToClients, IAnnouncement } from '../interfaces'
 import Announcement from '../models/announcement'
 import { sendContentToAllClients } from './webSocketController'
 import mongoose, { HydratedDocument } from 'mongoose'
-import { IdValidator, removeIdFromList } from '../utils/idManager'
+import { clearIdTTL, IdValidator, removeIdFromList } from '../utils/idManager'
 
 const announcementRouter = express.Router()
 
@@ -41,6 +41,7 @@ announcementRouter.post('/add/:id', IdValidator, async (req, res) => {
       }
     }
     res.status(200).json({ message: 'Saved successfully' })
+    clearIdTTL(id)
     removeIdFromList(id)
     sendContentToAllClients(announcementToSend)
   } catch (error) {
