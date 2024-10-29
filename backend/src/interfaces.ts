@@ -1,7 +1,7 @@
 import { ObjectId } from 'mongoose'
 
 export interface IAnnouncement {
-  _id: ObjectId
+  id: string
   category: 'asiakastoive' | 'myynti-ilmoitus'
   poster: string
   contact_info?: string
@@ -23,7 +23,7 @@ export interface IUser {
 }
 
 export interface IAdvertisement {
-  _id: ObjectId
+  id: string
   file: {
     data: BinaryData
     type: string
@@ -40,7 +40,7 @@ export interface DataToClients {
   advertisementDelete: {
     type: 'advertisementdelete'
     data: {
-      id: ObjectId
+      id: string
     }
   }
   annnouncementAdd: {
@@ -52,7 +52,7 @@ export interface DataToClients {
   announcementDelete: {
     type: 'announcementdelete'
     data: {
-      id: ObjectId
+      id: string | string[]
     }
   }
   newAnnouncementId: {

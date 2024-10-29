@@ -46,9 +46,11 @@ const eventTypes = {
 const sendContent = async (connection: WebSocket) => {
   try {
     const announcements = await Announcement.find({})
+    const advertisements = await Advertisement.find({})
     const newAnnouncmentId = createNewId()
     const data = {
       announcements: announcements,
+      advertisements: advertisements,
       newAnnouncmentId: newAnnouncmentId
     }
     connection.send(JSON.stringify(data))
@@ -74,7 +76,6 @@ const sendError = async (connection: WebSocket, message: string) => {
 
 // Broadcast a message to all connected clients
 export const sendContentToAllClients = async (data: DataToClients['types']) => {
-  console.log('sendContentToAllClients called')
   for (const userId in clients) {
     const client = clients[userId]
     if (client.readyState === WebSocket.OPEN) {
@@ -104,7 +105,7 @@ const processReceivedMessage = async (
           type: 'advertisementadd',
           data: {
             advertisement: {
-              _id: receivedAdvertisement._id,
+              id: receivedAdvertisement.toJSON().id,
               file: receivedAdvertisement.file
             }
           }
@@ -126,7 +127,7 @@ const processReceivedMessage = async (
         const advertisementToDelete: DataToClients['advertisementDelete'] = {
           type: 'advertisementdelete',
           data: {
-            id: deletedAdvertisement._id
+            id: deletedAdvertisement._id.toString()
           }
         }
         sendContentToAllClients(advertisementToDelete)
@@ -146,7 +147,7 @@ const processReceivedMessage = async (
         const announcementToDelete: DataToClients['announcementDelete'] = {
           type: 'announcementdelete',
           data: {
-            id: deletedAnnouncement._id
+            id: deletedAnnouncement._id.toString()
           }
         }
         sendContentToAllClients(announcementToDelete)
