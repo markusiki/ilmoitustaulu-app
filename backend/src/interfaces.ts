@@ -17,7 +17,8 @@ export interface IAnnouncement {
 
 export interface IUser {
   username: string
-  password_hash: string
+  passwordHash: string
+  role: 'client' | 'admin'
   email?: string
   phone?: string
 }
