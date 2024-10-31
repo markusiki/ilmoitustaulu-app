@@ -18,7 +18,9 @@
     "isbot": "^4.1.0",
     "react": "^18.2.0",
     "react-bootstrap": "^2.10.5",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "react-use-websocket": "^4.10.0",
+    "ws": "^8.18.0"
   },
   "devDependencies": {
     "@remix-run/dev": "^2.13.1",
