@@ -1,19 +1,25 @@
-import { Schema, model } from "mongoose";
-import { IUser } from "../interfaces";
+import { Schema, model } from 'mongoose'
+import { IUser } from '../interfaces'
 
-const userShema = new Schema<IUser>({
-  username: {
-    type: String,
-    required: true
+const userShema = new Schema<IUser>(
+  {
+    username: {
+      type: String,
+      required: true
+    },
+    passwordHash: {
+      type: String,
+      required: true
+    },
+    role: {
+      type: String,
+      required: true
+    },
+    email: String,
+    phone: String
   },
-  password_hash: {
-    type: String,
-    required: true
-  },
-  email: String,
-  phone: String
-}, { timestamps: true })
-
+  { timestamps: true }
+)
 
 userShema.set('toJSON', {
   transform: (document, returnedObject) => {
@@ -21,8 +27,7 @@ userShema.set('toJSON', {
     delete returnedObject._id
     delete returnedObject.__v
   },
-  virtuals: true,
+  virtuals: true
 })
-
 
 export default model<IUser>('User', userShema)
