@@ -1,6 +1,7 @@
 import config from './utils/config'
 import express, { Express, NextFunction, Request, Response } from 'express'
 import mongoose from 'mongoose'
+import cookieParser from 'cookie-parser'
 import announcementRouter from './controllers/announcement'
 import path from 'path'
 import setCleaner from './services/cleaner'
@@ -10,6 +11,7 @@ import {
   setIdTTL
 } from './utils/idManager'
 import { checkTrailingSlash } from './utils/middleware'
+import loginRouter from './controllers/login'
 
 const app: Express = express()
 app.enable('strict routing')
@@ -24,8 +26,10 @@ mongoose
   })
 
 app.use(express.json())
+app.use(cookieParser())
 
 //APIs
+app.use('/api/login', loginRouter)
 app.use('/api/announcements', announcementRouter)
 
 //Routes
