@@ -4,11 +4,11 @@ import Announcement from '../models/announcement'
 import { sendContentToAllClients } from './webSocketController'
 import mongoose, { HydratedDocument } from 'mongoose'
 import { clearIdTTL, IdValidator, removeIdFromList } from '../utils/idManager'
+import { authorization, CustomRequest } from '../utils/middleware'
 
 const announcementRouter = express.Router()
 
-announcementRouter.get('/getall', async (req, res) => {
-  console.log('called')
+announcementRouter.get('/getall', authorization, async (req, res, next) => {
   try {
     const announcements = await Announcement.find({})
     res.status(200).json(announcements)
