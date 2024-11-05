@@ -9,6 +9,7 @@ import {
   removeIdFromList
 } from '../utils/idManager'
 import { authorization, CustomRequest } from '../utils/middleware'
+import { handleNewAnnoucement } from '../utils/announcementManager'
 
 const announcementRouter = express.Router()
 
@@ -36,18 +37,15 @@ announcementRouter.post('/add/:id', IdValidator, async (req, res) => {
       content: body.content,
       file: body.file
     })
-    console.log(newAnnouncement)
-    const savedAnnouncement = await newAnnouncement.save()
-    const announcementToSend: DataToClients['annnouncementAdd'] = {
-      type: 'announcementadd',
-      data: {
-        announcement: savedAnnouncement
-      }
-    }
-    res.status(200).json({ message: 'Saved successfully' })
+
+    const status = await handleNewAnnoucement(newAnnouncement)
+    res.status(200).json({
+      message: status
+        ? status.message
+        : 'New announcement could not be handeled'
+    })
     clearIdTimeout(id)
     removeIdFromList(id)
-    sendContentToAllClients(announcementToSend)
   } catch (error) {
     console.log(error)
     res.status(400).json({ error: 'Error in saving announcement' })
