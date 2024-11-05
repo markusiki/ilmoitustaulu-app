@@ -5,11 +5,7 @@ import cookieParser from 'cookie-parser'
 import announcementRouter from './controllers/announcement'
 import path from 'path'
 import setCleaner from './services/cleaner'
-import {
-  IdValidator,
-  sendNewAnnouncementIdToClients,
-  setIdTTL
-} from './utils/idManager'
+import { IdValidator, handleId } from './utils/idManager'
 import { checkTrailingSlash } from './utils/middleware'
 import loginRouter from './controllers/login'
 
@@ -37,8 +33,7 @@ app.use(
   '/new/:id',
   checkTrailingSlash,
   IdValidator,
-  setIdTTL,
-  sendNewAnnouncementIdToClients,
+  handleId,
 
   express.static(path.join(__dirname, '../build/newannouncement'))
 )

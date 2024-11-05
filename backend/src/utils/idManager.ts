@@ -5,9 +5,11 @@ import { DataToClients } from '../interfaces'
 
 class Id {
   id
+  loaded: boolean
   timeout: null | NodeJS.Timeout
   constructor(id: mongoose.Types.ObjectId) {
     this.id = id
+    this.loaded = false
     this.timeout = null
   }
   setTimeout() {
@@ -29,7 +31,7 @@ class Id {
   }
 }
 
-const announcementIdExpiration = 0.5 //minutes
+const announcementIdExpiration = 60 //minutes
 const TTL = announcementIdExpiration * 60000
 let idList: Id[] = []
 
@@ -60,7 +62,7 @@ const createNewId = () => {
 
 export const getAnnouncementId = () => {
   if (idList.length > 1) {
-    return idList[0].id.toString()
+    return idList[idList.length - 1].id.toString()
   } else {
     return createNewId().toString()
   }
@@ -74,11 +76,7 @@ export const removeIdFromList = (id: string) => {
   }
 }
 
-export const sendNewAnnouncementIdToClients = (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+const sendNewAnnouncementIdToClients = () => {
   const newAnnouncementId: DataToClients['newAnnouncementId'] = {
     type: 'newannouncementid',
     data: {
@@ -86,20 +84,21 @@ export const sendNewAnnouncementIdToClients = (
     }
   }
   sendContentToAllClients(newAnnouncementId)
-  next()
 }
 
-export const setIdTTL = (req: Request, res: Response, next: NextFunction) => {
+export const handleId = (req: Request, res: Response, next: NextFunction) => {
   const idObject = idList.find(
     (element) => element.id.toString() === req.params.id
   )
-  if (idObject) {
+  if (idObject && !idObject.loaded) {
+    idObject.loaded = true
     idObject.setTimeout()
+    sendNewAnnouncementIdToClients()
   }
   next()
 }
 
-export const clearIdTTL = (id: string) => {
+export const clearIdTimeout = (id: string) => {
   const idObject = idList.find((element) => element.id.toString() === id)
   if (idObject) {
     idObject.clearTimeout()
