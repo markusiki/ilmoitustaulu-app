@@ -2,9 +2,10 @@ import React, { useState, useEffect, useRef } from "react";
 import { Container, Row, Col, Button, Modal } from "react-bootstrap";
 import Section from "./Section";
 import AddAnnouncementForm from "./AddAnnouncementForm";
+import { v4 as uuidv4 } from 'uuid';
 
 interface Announcement {
-  id: string;
+  _id: string;
   category: string;
   title: string;
   content: string;
@@ -21,6 +22,7 @@ export default function NoticeBoard() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [status, setStatus] = useState("Disconnected");
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
+  const [announcementId, setAnnouncementId] = useState("");
   const [advertisements, setAdvertisements] = useState<Advertisement[]>([]);
   const ws = useRef<WebSocket | null>(null);
 
@@ -53,6 +55,7 @@ export default function NoticeBoard() {
   }, []);
 
   const handleIncomingMessage = (data: any) => {
+    setAnnouncementId(data.announcmentId)
     if (data.announcements) {
       setAnnouncements(data.announcements);
     }
@@ -64,14 +67,34 @@ export default function NoticeBoard() {
     }
   };
 
-  const handleAddAnnouncement = (newAnnouncement: Omit<Announcement, "id">) => {
-    if (ws.current && ws.current.readyState === WebSocket.OPEN) {
-      const announcement = { ...newAnnouncement, id: Date.now().toString() };
-      ws.current.send(JSON.stringify({ type: "announcementadd", data: { announcement } }));
-      setAnnouncements((prev) => [...prev, announcement]); // Optimistically update
-      setIsModalOpen(false);
-    } else {
-      console.error("WebSocket connection is not open");
+  const handleAddAnnouncement = async (newAnnouncement: Omit<Announcement, "_id">) => {
+    const id = uuidv4(); // Generate a new ID for the announcement
+
+    try {
+      // First, make GET request to /new/:id
+      const initResponse = await fetch(`/api/announcements/new/${announcementId}`);
+      console.log(initResponse)
+      if (initResponse.ok) {
+        // If initialization is successful, make POST request to add the announcement
+        const response = await fetch(`/api/announcements/add/${id}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(newAnnouncement)
+        });
+        console.log(response)
+        if (response.ok) {
+          console.log("Announcement saved and broadcasted.");
+          setIsModalOpen(false);
+        } else {
+          console.error("Error saving announcement:", response.statusText);
+        }
+      } else {
+        console.error("Initialization failed:", initResponse.statusText);
+      }
+    } catch (error) {
+      console.error("Failed to add announcement:", error);
     }
   };
 

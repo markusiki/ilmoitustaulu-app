@@ -2,15 +2,19 @@ import { Card } from "react-bootstrap";
 
 interface NoticeProps {
   title: string;
-  description: string;
+  content: string;
+  poster: string;
+  contact_info: string;
 }
 
-export default function Notice({ title, description }: NoticeProps) {
+export default function Notice({ title, content, poster, contact_info }: NoticeProps) {
   return (
     <Card className="mb-2">
       <Card.Body>
         <Card.Title>{title}</Card.Title>
-        <Card.Text>{description}</Card.Text>
+        <Card.Text>{content}</Card.Text>
+        <Card.Text>{poster}</Card.Text>
+        <Card.Text>{contact_info}</Card.Text>
       </Card.Body>
     </Card>
   );

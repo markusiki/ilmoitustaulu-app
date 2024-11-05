@@ -4,6 +4,8 @@ import { Card } from "react-bootstrap";
 interface Announcement {
   title: string;
   content: string;
+  poster: string;
+  contact_info: string;
 }
 
 interface SectionProps {
@@ -20,7 +22,7 @@ export default function Section({ title, announcements }: SectionProps) {
       <Card.Body>
         {announcements.length > 0 ? (
           announcements.map((announcement, index) => (
-            <Notice key={index} title={announcement.title} description={announcement.content} />
+            <Notice key={index} title={announcement.title} content={announcement.content} poster={announcement.poster} contact_info={announcement.contact_info}  />
           ))
         ) : (
           <p>No announcements available.</p>

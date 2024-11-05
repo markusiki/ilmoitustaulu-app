@@ -3,8 +3,8 @@ import { Form, Button } from "react-bootstrap";
 
 interface AnnouncementFormData {
   category: "asiakastoive" | "myynti-ilmoitus";
-  announcer: string;
-  contactInfo: string;
+  poster: string;
+  contact_info: string;
   title: string;
   content: string;
 }
@@ -16,8 +16,8 @@ interface AddAnnouncementFormProps {
 export default function AddAnnouncementForm({ onAddAnnouncement }: AddAnnouncementFormProps) {
   const [formData, setFormData] = useState<AnnouncementFormData>({
     category: "asiakastoive",
-    announcer: "",
-    contactInfo: "",
+    poster: "",
+    contact_info: "",
     title: "",
     content: "",
   });
@@ -35,8 +35,8 @@ export default function AddAnnouncementForm({ onAddAnnouncement }: AddAnnounceme
     onAddAnnouncement(formData);
     setFormData({
       category: "asiakastoive",
-      announcer: "",
-      contactInfo: "",
+      poster: "",
+      contact_info: "",
       title: "",
       content: "",
     });
@@ -61,32 +61,32 @@ export default function AddAnnouncementForm({ onAddAnnouncement }: AddAnnounceme
             type="radio"
             name="category"
             label="Myynti"
-            value="Myynti"
+            value="myynti-ilmoitus"
             checked={formData.category === "myynti-ilmoitus"}
             onChange={handleInputChange}
           />
         </div>
       </Form.Group>
 
-      <Form.Group controlId="announcer">
+      <Form.Group controlId="poster">
         <Form.Label>Ilmoittaja</Form.Label>
         <Form.Control
           type="text"
-          name="announcer"
+          name="poster"
           placeholder="Ilmoittaja"
-          value={formData.announcer}
+          value={formData.poster}
           onChange={handleInputChange}
           required
         />
       </Form.Group>
 
-      <Form.Group controlId="contactInfo">
+      <Form.Group controlId="contact_info">
         <Form.Label>Yhteystiedot (valinnainen)</Form.Label>
         <Form.Control
           type="text"
-          name="contactInfo"
+          name="contact_info"
           placeholder="Yhteystiedot (valinnainen)"
-          value={formData.contactInfo}
+          value={formData.contact_info}
           onChange={handleInputChange}
         />
       </Form.Group>
