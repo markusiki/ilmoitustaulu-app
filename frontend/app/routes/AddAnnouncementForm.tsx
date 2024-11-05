@@ -2,7 +2,7 @@ import { useState, ChangeEvent, FormEvent } from "react";
 import { Form, Button } from "react-bootstrap";
 
 interface AnnouncementFormData {
-  category: "Asiakastoiveet" | "Myynti";
+  category: "asiakastoive" | "myynti-ilmoitus";
   announcer: string;
   contactInfo: string;
   title: string;
@@ -15,7 +15,7 @@ interface AddAnnouncementFormProps {
 
 export default function AddAnnouncementForm({ onAddAnnouncement }: AddAnnouncementFormProps) {
   const [formData, setFormData] = useState<AnnouncementFormData>({
-    category: "Asiakastoiveet",
+    category: "asiakastoive",
     announcer: "",
     contactInfo: "",
     title: "",
@@ -34,7 +34,7 @@ export default function AddAnnouncementForm({ onAddAnnouncement }: AddAnnounceme
     e.preventDefault();
     onAddAnnouncement(formData);
     setFormData({
-      category: "Asiakastoiveet",
+      category: "asiakastoive",
       announcer: "",
       contactInfo: "",
       title: "",
@@ -52,8 +52,8 @@ export default function AddAnnouncementForm({ onAddAnnouncement }: AddAnnounceme
             type="radio"
             name="category"
             label="Asiakastoiveet"
-            value="Asiakastoiveet"
-            checked={formData.category === "Asiakastoiveet"}
+            value="asiakastoive"
+            checked={formData.category === "asiakastoive"}
             onChange={handleInputChange}
           />
           <Form.Check
@@ -62,7 +62,7 @@ export default function AddAnnouncementForm({ onAddAnnouncement }: AddAnnounceme
             name="category"
             label="Myynti"
             value="Myynti"
-            checked={formData.category === "Myynti"}
+            checked={formData.category === "myynti-ilmoitus"}
             onChange={handleInputChange}
           />
         </div>

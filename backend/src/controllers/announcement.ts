@@ -32,7 +32,7 @@ announcementRouter.post('/add/:id', IdValidator, async (req, res) => {
       content: body.content,
       file: body.file
     })
-
+    console.log(newAnnouncement)
     const savedAnnouncement = await newAnnouncement.save()
     const announcementToSend: DataToClients['annnouncementAdd'] = {
       type: 'announcementadd',
