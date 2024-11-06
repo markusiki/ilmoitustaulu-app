@@ -36,7 +36,6 @@ export default function NoticeBoard() {
 
     ws.current.onmessage = (event) => {
       const data = JSON.parse(event.data);
-      console.log("Received data:", data);
       handleIncomingMessage(data);
     };
 
@@ -55,46 +54,43 @@ export default function NoticeBoard() {
   }, []);
 
   const handleIncomingMessage = (data: any) => {
-    setAnnouncementId(data.announcmentId)
+    console.log("Received data:", data);  // Log data to confirm structure
+    setAnnouncementId(data.announcmentId); // Use data.announcmentId as sent from backend
     if (data.announcements) {
-      setAnnouncements(data.announcements);
+        setAnnouncements(data.announcements);
     }
     if (data.advertisements) {
-      setAdvertisements(data.advertisements);
+        setAdvertisements(data.advertisements);
     }
     if (data.type === "announcementadd" && data.data.announcement) {
-      setAnnouncements((prev) => [...prev, data.data.announcement]);
+        setAnnouncements((prev) => [...prev, data.data.announcement]);
     }
-  };
+};
 
   const handleAddAnnouncement = async (newAnnouncement: Omit<Announcement, "_id">) => {
-    const id = uuidv4(); // Generate a new ID for the announcement
+    console.log("Using announcementId:", announcementId);  // Log announcementId to confirm it's correct
 
     try {
-      // First, make GET request to /new/:id
-      const initResponse = await fetch(`/api/announcements/new/${announcementId}`);
-      console.log(initResponse)
-      if (initResponse.ok) {
-        // If initialization is successful, make POST request to add the announcement
-        const response = await fetch(`/api/announcements/add/${id}`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify(newAnnouncement)
-        });
-        console.log(response)
-        if (response.ok) {
-          console.log("Announcement saved and broadcasted.");
-          setIsModalOpen(false);
+        const initResponse = await fetch(`http://localhost:5000/api/announcements/new/${announcementId}`);
+        if (initResponse.ok) {
+            const response = await fetch(`http://localhost:5000/api/announcements/add/${announcementId}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(newAnnouncement)
+            });
+            if (response.ok) {
+                console.log("Announcement saved and broadcasted.");
+                setIsModalOpen(false);
+            } else {
+                console.error("Error saving announcement:", response.statusText);
+            }
         } else {
-          console.error("Error saving announcement:", response.statusText);
+            console.error("Initialization failed:", initResponse.statusText);
         }
-      } else {
-        console.error("Initialization failed:", initResponse.statusText);
-      }
     } catch (error) {
-      console.error("Failed to add announcement:", error);
+        console.error("Failed to add announcement:", error);
     }
   };
 
