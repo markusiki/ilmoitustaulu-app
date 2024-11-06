@@ -23,7 +23,8 @@ const announcementShema = new Schema<IAnnouncement>(
     file: {
       data: Blob,
       type: String
-    }
+    },
+    publishedAt: Date
   },
   { timestamps: true }
 )

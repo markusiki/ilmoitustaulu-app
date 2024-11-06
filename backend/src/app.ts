@@ -4,7 +4,7 @@ import mongoose from 'mongoose'
 import cookieParser from 'cookie-parser'
 import announcementRouter from './controllers/announcement'
 import path from 'path'
-import setCleaner from './services/cleaner'
+import { setAnnouncementManager } from './utils/announcementManager'
 import { IdValidator, handleId } from './utils/idManager'
 import { checkTrailingSlash } from './utils/middleware'
 import loginRouter from './controllers/login'
@@ -47,6 +47,6 @@ app.use(
 )
 app.use(express.static(path.join(__dirname, '../build/ws')))
 
-setCleaner()
+setAnnouncementManager()
 
 export default app

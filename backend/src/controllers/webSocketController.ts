@@ -3,7 +3,8 @@ import { v4 as uuidv4 } from 'uuid'
 import Announcement from '../models/announcement'
 import Advertisement from '../models/advertisement'
 import { DataToClients, InitialDataToClient } from '../interfaces'
-import { getAnnouncementId } from '../utils/idManager'
+import { getNewAnnouncementId } from '../utils/idManager'
+import { getPublishedAnnouncements } from '../utils/announcementManager'
 
 interface Client {
   readyState: number
@@ -44,9 +45,9 @@ const eventTypes = {
 // Broadcast announcement to new client
 const sendContent = async (connection: WebSocket) => {
   try {
-    const announcements = await Announcement.find({})
+    const announcements = await getPublishedAnnouncements()
     const advertisements = await Advertisement.find({})
-    const newAnnouncmentId = getAnnouncementId()
+    const newAnnouncmentId = getNewAnnouncementId()
     const data: InitialDataToClient = {
       announcements: announcements,
       advertisements: advertisements,

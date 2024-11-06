@@ -60,7 +60,7 @@ const createNewId = () => {
   return idObject.id
 }
 
-export const getAnnouncementId = () => {
+export const getNewAnnouncementId = () => {
   if (idList.length > 1) {
     return idList[idList.length - 1].id.toString()
   } else {
@@ -72,7 +72,6 @@ export const removeIdFromList = (id: string) => {
   const idToDelete = idList.findIndex((element) => element.id.toString() === id)
   if (idToDelete !== -1) {
     idList.splice(idToDelete, 1)
-    console.log('deleted id ', id)
   }
 }
 

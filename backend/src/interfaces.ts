@@ -11,6 +11,7 @@ export interface IAnnouncement {
     data: BinaryData
     type: string
   }
+  publishedAt?: Date
   createdAt: Date
   updatedAt: Date
 }
@@ -53,7 +54,7 @@ export interface DataToClients {
   annnouncementAdd: {
     type: 'announcementadd'
     data: {
-      announcement: IAnnouncement
+      announcement: IAnnouncement | IAnnouncement[]
     }
   }
   announcementDelete: {
