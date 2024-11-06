@@ -4,7 +4,7 @@ import Announcement from '../models/announcement'
 import { setInterval } from 'timers'
 import { sendContentToAllClients } from '../controllers/webSocketController'
 
-const maxAgeDays = 14 * 86400000
+const maxAgeDays = 14
 const maxCustomerWishCount = 18
 const maxSaleAnnouncementCount = 18
 const intervalDays = 1
@@ -15,7 +15,8 @@ const deleteOldAnnouncements = async (
   limit: number
 ) => {
   const ageLimit = new Date()
-  ageLimit.setSeconds(ageLimit.getSeconds() - maxAgeDays)
+  ageLimit.setDate(ageLimit.getDate() - maxAgeDays)
+
   try {
     const documentsToDelete = await Announcement.find({
       category: category,
@@ -41,7 +42,7 @@ const deleteOldAnnouncements = async (
   }
 }
 
-const getAnnouncementsFromQueue = async (
+const publishAnnouncementsFromQueue = async (
   category: IAnnouncement['category'],
   count: number
 ) => {
@@ -68,34 +69,43 @@ const getAnnouncementsFromQueue = async (
         announcement: announcementsToPublish
       }
     })
+    return true
+  }
+  return false
+}
+
+const countAnnouncements = async (category: IAnnouncement['category']) => {
+  return await Announcement.countDocuments({
+    category: category
+  }).exec()
+}
+
+const handleAnnouncementsChange = async (
+  category?: IAnnouncement['category']
+) => {
+  const changeAnnouncements = async (category: IAnnouncement['category']) => {
+    const announcementCount = await countAnnouncements(category)
+    const maxCount = getMaxCount(category)
+
+    if (announcementCount > maxCount) {
+      const limit = announcementCount - maxCount
+      const deletedCount = await deleteOldAnnouncements(category, limit)
+      if (deletedCount) {
+        return await publishAnnouncementsFromQueue(category, deletedCount)
+      }
+    }
+    return false
+  }
+
+  if (category) {
+    return await changeAnnouncements(category)
+  } else {
+    changeAnnouncements('asiakastoive')
+    changeAnnouncements('myynti-ilmoitus')
   }
 }
 
-const changeAnnouncements = async () => {
-  const customerWishesCount = await Announcement.countDocuments({
-    category: 'asiakastoive'
-  }).exec()
-  const saleAnnouncementsCount = await Announcement.countDocuments({
-    category: 'myynti-ilmoitus'
-  }).exec()
-
-  if (customerWishesCount > maxCustomerWishCount) {
-    const limit = customerWishesCount - maxCustomerWishCount
-    const deletedCount = await deleteOldAnnouncements('asiakastoive', limit)
-    if (deletedCount) {
-      getAnnouncementsFromQueue('asiakastoive', deletedCount)
-    }
-  }
-  if (saleAnnouncementsCount > maxSaleAnnouncementCount) {
-    const limit = saleAnnouncementsCount - maxSaleAnnouncementCount
-    const deletedCount = await deleteOldAnnouncements('myynti-ilmoitus', limit)
-    if (deletedCount) {
-      getAnnouncementsFromQueue('myynti-ilmoitus', deletedCount)
-    }
-  }
-}
-
-const maxCount = (category: IAnnouncement['category']) => {
+const getMaxCount = (category: IAnnouncement['category']) => {
   switch (category) {
     case 'asiakastoive':
       return maxCustomerWishCount
@@ -113,8 +123,9 @@ export const handleNewAnnoucement = async (
       .find({ category: newAnnouncement.category })
       .countDocuments()
 
-    // Publish announcement
-    if (publishedAnnouncementsCount < maxCount(newAnnouncement.category)) {
+    const maxCount = getMaxCount(newAnnouncement.category)
+
+    if (publishedAnnouncementsCount < maxCount) {
       newAnnouncement.publishedAt = new Date()
       const savedAnnouncement = await newAnnouncement.save()
       const announcementToSend: DataToClients['annnouncementAdd'] = {
@@ -125,26 +136,33 @@ export const handleNewAnnoucement = async (
       }
       sendContentToAllClients(announcementToSend)
       return { message: 'Announcement saved and published succesfully' }
-    }
-    // Put announcement to queue
-    else {
+    } else {
       await newAnnouncement.save()
-      return { message: 'Announcement saved succesfully and put to queue' }
+      const isPublished = await handleAnnouncementsChange(
+        newAnnouncement.category
+      )
+      console.log('published', isPublished)
+      return {
+        message: isPublished
+          ? 'Announcement saved and published succesfully'
+          : 'Announcement saved succesfully and put to queue'
+      }
     }
   } catch (error) {
     console.log(error)
   }
 }
 
-export const setAnnouncementManager = () => {
-  setInterval(async () => {
-    await changeAnnouncements()
-  }, delay)
-}
 export const getPublishedAnnouncements = async () => {
   const publishedAnnouncements = await Announcement.find({
     publishedAt: { $exists: true }
   })
 
   return publishedAnnouncements
+}
+
+export const setAnnouncementManager = () => {
+  setInterval(async () => {
+    await handleAnnouncementsChange()
+  }, delay)
 }
