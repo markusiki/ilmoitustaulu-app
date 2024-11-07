@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Container, Row, Col, Button, Modal } from "react-bootstrap";
 import Section from "./Section";
 import AddAnnouncementForm from "./AddAnnouncementForm";
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 
 interface Announcement {
   _id: string;
@@ -54,43 +54,46 @@ export default function NoticeBoard() {
   }, []);
 
   const handleIncomingMessage = (data: any) => {
-    console.log("Received data:", data);  // Log data to confirm structure
+    console.log("Received data:", data); // Log data to confirm structure
     setAnnouncementId(data.announcmentId); // Use data.announcmentId as sent from backend
     if (data.announcements) {
-        setAnnouncements(data.announcements);
+      setAnnouncements(data.announcements);
     }
     if (data.advertisements) {
-        setAdvertisements(data.advertisements);
+      setAdvertisements(data.advertisements);
     }
     if (data.type === "announcementadd" && data.data.announcement) {
-        setAnnouncements((prev) => [...prev, data.data.announcement]);
+      setAnnouncements((prev) => [...prev, data.data.announcement]);
     }
-};
+  };
 
   const handleAddAnnouncement = async (newAnnouncement: Omit<Announcement, "_id">) => {
-    console.log("Using announcementId:", announcementId);  // Log announcementId to confirm it's correct
+    console.log("Using announcementId:", announcementId); // Log announcementId to confirm it's correct
 
     try {
-        const initResponse = await fetch(`http://localhost:5000/api/announcements/new/${announcementId}`);
-        if (initResponse.ok) {
-            const response = await fetch(`http://localhost:5000/api/announcements/add/${announcementId}`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(newAnnouncement)
-            });
-            if (response.ok) {
-                console.log("Announcement saved and broadcasted.");
-                setIsModalOpen(false);
-            } else {
-                console.error("Error saving announcement:", response.statusText);
-            }
+      const initResponse = await fetch(`http://localhost:5000/new/${announcementId}/`);
+      if (initResponse.ok) {
+        const response = await fetch(
+          `http://localhost:5000/api/announcements/add/${announcementId}`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(newAnnouncement),
+          }
+        );
+        if (response.ok) {
+          console.log("Announcement saved and broadcasted.");
+          setIsModalOpen(false);
         } else {
-            console.error("Initialization failed:", initResponse.statusText);
+          console.error("Error saving announcement:", response.statusText);
         }
+      } else {
+        console.error("Initialization failed:", initResponse.statusText);
+      }
     } catch (error) {
-        console.error("Failed to add announcement:", error);
+      console.error("Failed to add announcement:", error);
     }
   };
 
@@ -103,10 +106,7 @@ export default function NoticeBoard() {
 
       <Row className="mb-4">
         <Col md={4}>
-          <Section
-            title="Tarjoukset"
-            announcements={filterAnnouncementsByCategory("tarjous")}
-          />
+          <Section title="Tarjoukset" announcements={filterAnnouncementsByCategory("tarjous")} />
         </Col>
         <Col md={8}>
           <Section
