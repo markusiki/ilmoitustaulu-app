@@ -2,7 +2,7 @@ import { Server as WebSocketServer, WebSocket, RawData } from 'ws'
 import { v4 as uuidv4 } from 'uuid'
 import Announcement from '../models/announcement'
 import Advertisement from '../models/advertisement'
-import { DataToClients, InitialDataToClient } from '../interfaces'
+import { DataToClients } from '../interfaces'
 import { getNewAnnouncementId } from '../utils/idManager'
 import { getPublishedAnnouncements } from '../utils/announcementManager'
 
@@ -48,10 +48,13 @@ const sendContent = async (connection: WebSocket) => {
     const announcements = await getPublishedAnnouncements()
     const advertisements = await Advertisement.find({})
     const newAnnouncmentId = getNewAnnouncementId()
-    const data: InitialDataToClient = {
-      announcements: announcements,
-      advertisements: advertisements,
-      announcmentId: newAnnouncmentId
+    const data: DataToClients['initialData'] = {
+      type: 'initialdata',
+      data: {
+        announcements: announcements,
+        advertisements: advertisements,
+        newAnnouncmentId: newAnnouncmentId
+      }
     }
     connection.send(JSON.stringify(data))
   } catch (error) {

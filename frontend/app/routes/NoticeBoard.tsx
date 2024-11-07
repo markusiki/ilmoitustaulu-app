@@ -3,27 +3,14 @@ import { Container, Row, Col, Button, Modal } from "react-bootstrap";
 import Section from "./Section";
 import AddAnnouncementForm from "./AddAnnouncementForm";
 import { v4 as uuidv4 } from "uuid";
-
-interface Announcement {
-  _id: string;
-  category: string;
-  title: string;
-  content: string;
-  poster?: string;
-  contact_info?: string;
-}
-
-interface Advertisement {
-  id: string;
-  file: string;
-}
+import { DataFromServer, IAdvertisement, IAnnouncement } from "../../interfaces";
 
 export default function NoticeBoard() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [status, setStatus] = useState("Disconnected");
-  const [announcements, setAnnouncements] = useState<Announcement[]>([]);
+  const [announcements, setAnnouncements] = useState<IAnnouncement[]>([]);
   const [announcementId, setAnnouncementId] = useState("");
-  const [advertisements, setAdvertisements] = useState<Advertisement[]>([]);
+  const [advertisements, setAdvertisements] = useState<IAdvertisement[]>([]);
   const ws = useRef<WebSocket | null>(null);
 
   useEffect(() => {
@@ -53,21 +40,40 @@ export default function NoticeBoard() {
     };
   }, []);
 
-  const handleIncomingMessage = (data: any) => {
-    console.log("Received data:", data); // Log data to confirm structure
-    setAnnouncementId(data.announcmentId); // Use data.announcmentId as sent from backend
-    if (data.announcements) {
-      setAnnouncements(data.announcements);
+  const handleIncomingMessage = (message: DataFromServer) => {
+    console.log("Received data:", message); // Log data to confirm structure
+    if (message.type === "initialdata") {
+      setAnnouncements(message.data.announcements);
+      setAdvertisements(message.data.advertisements);
+      setAnnouncementId(message.data.newAnnouncmentId); // Use data.announcmentId as sent from backend
     }
-    if (data.advertisements) {
-      setAdvertisements(data.advertisements);
+    if (message.type === "advertisementadd") {
+      setAdvertisements((prev) => [...prev, message.data.advertisement]);
     }
-    if (data.type === "announcementadd" && data.data.announcement) {
-      setAnnouncements((prev) => [...prev, data.data.announcement]);
+    if (message.type === "advertisementdelete") {
+      setAdvertisements((prev) =>
+        prev.filter((advertisement) => advertisement.id !== message.data.id)
+      );
+    }
+    if (message.type === "announcementadd") {
+      const newAnnouncements = message.data.announcement;
+      setAnnouncements((prev) => {
+        return Array.isArray(newAnnouncements)
+          ? [...prev, ...newAnnouncements]
+          : [...prev, newAnnouncements];
+      });
+    }
+    if (message.type === "announcementdelete") {
+      setAnnouncements((prev) =>
+        prev.filter((announcement) => announcement.id !== message.data.id)
+      );
+    }
+    if (message.type === "newannouncementid") {
+      setAnnouncementId(message.data.id);
     }
   };
 
-  const handleAddAnnouncement = async (newAnnouncement: Omit<Announcement, "_id">) => {
+  const handleAddAnnouncement = async (newAnnouncement: Omit<IAnnouncement, "id">) => {
     console.log("Using announcementId:", announcementId); // Log announcementId to confirm it's correct
 
     try {

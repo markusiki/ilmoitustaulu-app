@@ -128,7 +128,7 @@ export const handleNewAnnoucement = async (
     if (publishedAnnouncementsCount < maxCount) {
       newAnnouncement.publishedAt = new Date()
       const savedAnnouncement = await newAnnouncement.save()
-      const announcementToSend: DataToClients['annnouncementAdd'] = {
+      const announcementToSend: DataToClients['announcementAdd'] = {
         type: 'announcementadd',
         data: {
           announcement: savedAnnouncement
