@@ -1,6 +1,7 @@
 import config from './utils/config'
 import express, { Express, NextFunction, Request, Response } from 'express'
 import mongoose from 'mongoose'
+import cors from 'cors'
 import cookieParser from 'cookie-parser'
 import announcementRouter from './controllers/announcement'
 import path from 'path'
@@ -21,6 +22,7 @@ mongoose
     console.error('error connection to MongoDB', error.message)
   })
 
+app.use(cors())
 app.use(express.json())
 app.use(cookieParser())
 
