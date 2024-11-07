@@ -1,5 +1,3 @@
-import { ObjectId } from 'mongoose'
-
 export interface IAnnouncement {
   id: string
   category: 'asiakastoive' | 'myynti-ilmoitus'
@@ -32,13 +30,15 @@ export interface IAdvertisement {
   }
 }
 
-export interface InitialDataToClient {
-  announcements: IAnnouncement[]
-  advertisements: IAdvertisement[]
-  announcmentId: string
-}
-
 export interface DataToClients {
+  initialData: {
+    type: 'initialdata'
+    data: {
+      announcements: IAnnouncement[]
+      advertisements: IAdvertisement[]
+      newAnnouncmentId: string
+    }
+  }
   advertisementAdd: {
     type: 'advertisementadd'
     data: {
@@ -51,7 +51,7 @@ export interface DataToClients {
       id: string
     }
   }
-  annnouncementAdd: {
+  announcementAdd: {
     type: 'announcementadd'
     data: {
       announcement: IAnnouncement | IAnnouncement[]
@@ -70,9 +70,10 @@ export interface DataToClients {
     }
   }
   types: DataToClients[
+    | 'initialData'
     | 'advertisementAdd'
     | 'advertisementDelete'
-    | 'annnouncementAdd'
+    | 'announcementAdd'
     | 'announcementDelete'
     | 'newAnnouncementId']
 }
