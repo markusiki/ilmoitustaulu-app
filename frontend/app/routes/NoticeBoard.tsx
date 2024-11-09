@@ -3,6 +3,7 @@ import { Container, Row, Col, Button, Modal } from "react-bootstrap";
 import Section from "./Section";
 import AddAnnouncementForm from "./AddAnnouncementForm";
 import { v4 as uuidv4 } from "uuid";
+import {QRCodeSVG} from 'qrcode.react';
 import { DataFromServer, IAdvertisement, IAnnouncement } from "../../interfaces";
 
 export default function NoticeBoard() {
@@ -125,7 +126,7 @@ export default function NoticeBoard() {
       <Row>
         <Col md={4} className="d-flex flex-column align-items-center justify-content-center">
           <p className="text-center">Lisää oma ilmoituksesi skannaamalla QR-koodi</p>
-          <img src="QR_Test.svg" alt="QR Code" className="img-fluid" style={{ width: "100px" }} />
+          <QRCodeSVG value="http://localhost:5000/new/${announcementId}/" />
         </Col>
         <Col md={8}>
           <Section
