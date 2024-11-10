@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Container, Row, Col, Button, Modal } from "react-bootstrap";
 import Section from "./Section";
 import AddAnnouncementForm from "./AddAnnouncementForm";
-import { v4 as uuidv4 } from "uuid";
+import AdvertisementGrid from "./AdvertisementGrid";
 import {QRCodeSVG} from 'qrcode.react';
 import { DataFromServer, IAdvertisement, IAnnouncement } from "../../interfaces";
 
@@ -113,7 +113,7 @@ export default function NoticeBoard() {
 
       <Row className="mb-4">
         <Col md={4}>
-          <Section title="Tarjoukset" announcements={filterAnnouncementsByCategory("tarjous")} />
+          <AdvertisementGrid advertisements={advertisements} />
         </Col>
         <Col md={8}>
           <Section

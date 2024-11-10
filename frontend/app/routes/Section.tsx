@@ -1,5 +1,5 @@
 import Notice from "./Notice";
-import { Card } from "react-bootstrap";
+import { Card, Row, Col } from "react-bootstrap";
 
 interface Announcement {
   title: string;
@@ -21,9 +21,18 @@ export default function Section({ title, announcements }: SectionProps) {
       </Card.Header>
       <Card.Body>
         {announcements.length > 0 ? (
-          announcements.map((announcement, index) => (
-            <Notice key={index} title={announcement.title} content={announcement.content} poster={announcement.poster} contact_info={announcement.contact_info}  />
-          ))
+          <Row>
+            {announcements.map((announcement, index) => (
+              <Col key={index} md={2} className="mb-3">
+                <Notice
+                  title={announcement.title}
+                  content={announcement.content}
+                  poster={announcement.poster}
+                  contact_info={announcement.contact_info}
+                />
+              </Col>
+            ))}
+          </Row>
         ) : (
           <p>No announcements available.</p>
         )}

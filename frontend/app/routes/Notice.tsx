@@ -9,7 +9,7 @@ interface NoticeProps {
 
 export default function Notice({ title, content, poster, contact_info }: NoticeProps) {
   return (
-    <Card className="mb-2">
+    <Card className="mb-2" style={{ height: "170px" }}>
       <Card.Body>
         <Card.Title>{title}</Card.Title>
         <Card.Text>{content}</Card.Text>
