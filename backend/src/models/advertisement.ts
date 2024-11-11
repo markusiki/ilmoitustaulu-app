@@ -3,10 +3,7 @@ import { IAdvertisement } from '../interfaces'
 
 const advertisementSchema = new Schema<IAdvertisement>(
   {
-    file: {
-      data: Blob,
-      type: String
-    }
+    file: String
   },
   { timestamps: true }
 )
