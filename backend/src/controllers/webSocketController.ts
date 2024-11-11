@@ -116,7 +116,7 @@ const processReceivedMessage = async (
         sendContentToAllClients(advertisementToSend)
       }
     } catch (error) {
-      const message = `Error happened durin advertisement saving, error: ${error}`
+      const message = `Error happened during advertisement saving, error: ${error}`
       sendError(connection, message)
       console.log(error)
     }
