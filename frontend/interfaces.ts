@@ -13,10 +13,7 @@ export interface IAnnouncement {
 
 export interface IAdvertisement {
   id: string;
-  file: {
-    data: BinaryData;
-    type: string;
-  };
+  file: BinaryData;
 }
 
 export interface DataFromServer {
