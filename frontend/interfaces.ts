@@ -15,18 +15,18 @@ export interface IAdvertisement {
 
 export interface DataFromServer {
   type:
-    | "initialdata"
-    | "advertisementadd"
-    | "advertisementdelete"
-    | "announcementadd"
-    | "announcementdelete"
-    | "newannouncementid";
+  | "initialdata"
+  | "advertisementadd"
+  | "advertisementdelete"
+  | "announcementadd"
+  | "announcementdelete"
+  | "newannouncementid";
   data: {
     announcements: IAnnouncement[];
     advertisements: IAdvertisement[];
     announcement: IAnnouncement | IAnnouncement[];
     advertisement: IAdvertisement;
-    newAnnouncmentId: string;
+    newAnnouncementId: string;
     id: string;
   };
 }
