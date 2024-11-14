@@ -1,27 +1,39 @@
 import React from 'react';
-import { Row, Col, Card } from 'react-bootstrap';
+import { Carousel } from 'react-bootstrap';
 import { IAdvertisement } from "../../interfaces";
+import 'bootstrap/dist/css/bootstrap.min.css';
+import '../custom.css';
 
 interface AdvertisementGridProps {
   advertisements: IAdvertisement[];
 }
 
+const advertisements: IAdvertisement[] = [
+  { id: 1, file: 'juusto.jpg' },
+  { id: 2, file: 'liha.jpg' },
+  { id: 3, file: 'makarooni.jpg' },
+  { id: 4, file: 'makkara.jpg' },
+  { id: 5, file: 'leipa.jpg' },
+  // Add more advertisements as needed
+];
+
 export default function AdvertisementGrid({ advertisements }: AdvertisementGridProps) {
   return (
     <div>
-      <h2>Advertisements</h2>
-      <Row>
+      <Carousel interval={3000} controls={false} indicators={false}>
         {advertisements.slice(0, 16).map((ad, index) => (
-          <Col key={ad.id} xs={6} sm={4} md={3} className="mb-3">
-            <Card>
-              <Card.Img variant="top" src={ad.file} alt={`Advertisement ${index + 1}`} />
-              <Card.Body>
-                <Card.Text>tekstiä</Card.Text>
-              </Card.Body>
-            </Card>
-          </Col>
+          <Carousel.Item key={ad.id}>
+            <img
+              className="d-block w-100 carousel-image"
+              src={`/adds/${ad.file}`}
+              alt={`Advertisement ${index + 1}`}
+            />
+            <Carousel.Caption>
+              <p>tekstiä</p>
+            </Carousel.Caption>
+          </Carousel.Item>
         ))}
-      </Row>
+      </Carousel>
     </div>
   );
 }

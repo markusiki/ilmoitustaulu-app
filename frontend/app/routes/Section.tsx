@@ -16,7 +16,7 @@ interface SectionProps {
 export default function Section({ title, announcements }: SectionProps) {
   return (
     <Card className="mb-4">
-      <Card.Header className="bg-primary text-white">
+      <Card.Header className="">
         <h2>{title}</h2>
       </Card.Header>
       <Card.Body>
