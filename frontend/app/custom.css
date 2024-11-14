@@ -1,10 +1,11 @@
 /* custom.css */
 
 /* Import a cool font from Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap");
 
 /* Apply a gradient background animation to the body */
-html, body {
+html,
+body {
   height: 100%;
   margin: 0;
   padding: 0;
@@ -37,7 +38,7 @@ html, body {
 
 /* Custom header style */
 .custom-header {
-  font-family: 'Roboto', sans-serif;
+  font-family: "Roboto", sans-serif;
   font-size: 6rem; /* Increased font size */
   background: linear-gradient(to right, rgb(81, 81, 81), rgb(37, 37, 37)); /* Gradient effect */
   -webkit-background-clip: text;
@@ -82,7 +83,6 @@ button:hover {
   background-color: #fff;
   border: 1px solid #e5e7eb;
   border-radius: 8px;
-  padding: 20px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   margin: 20px 0;
 }
@@ -100,8 +100,8 @@ button:hover {
 
 /* Custom CSS class for carousel images */
 .carousel-image {
-  max-width: 250px;
-  max-height: 250px; /* Adjust the height as needed */
+  max-width: 65%;
+  max-height: 65%; /* Adjust the height as needed */
   width: auto;
   height: auto;
   margin: 0 auto; /* Center the image */

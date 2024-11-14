@@ -1,6 +1,7 @@
 import { IAnnouncement } from "interfaces";
 import Notice from "./Notice";
 import { Card, Row, Col } from "react-bootstrap";
+import "../custom.css";
 
 interface SectionProps {
   title: string;
@@ -9,10 +10,11 @@ interface SectionProps {
 
 export default function Section({ title, announcements }: SectionProps) {
   return (
-    <Card className="mb-4">
-      <Card.Header className="">
-        <h2>{title}</h2>
+    <Card className="mb-4" style={{ height: "100%" }}>
+      <Card.Header>
+        <h1 className="section-title">{title}</h1>
       </Card.Header>
+
       <Card.Body>
         {announcements.length > 0 ? (
           <Row>

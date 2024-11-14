@@ -1,24 +1,22 @@
-
-import React from 'react';
-import { Carousel } from 'react-bootstrap';
-
 import React from "react";
+import { Carousel } from "react-bootstrap";
+
 import { Row, Col, Card } from "react-bootstrap";
 
 import { IAdvertisement } from "../../interfaces";
-import 'bootstrap/dist/css/bootstrap.min.css';
-import '../custom.css';
+import "bootstrap/dist/css/bootstrap.min.css";
+import "../custom.css";
 
 interface AdvertisementGridProps {
-  advertisements: IAdvertisement[];
+  advertisements: IAdvertisement[] | { id: number; file: string }[];
 }
 
-const advertisements: IAdvertisement[] = [
-  { id: 1, file: 'juusto.jpg' },
-  { id: 2, file: 'liha.jpg' },
-  { id: 3, file: 'makarooni.jpg' },
-  { id: 4, file: 'makkara.jpg' },
-  { id: 5, file: 'leipa.jpg' },
+const demoAdvertisements = [
+  { id: 1, file: "juusto.jpg" },
+  { id: 2, file: "liha.jpg" },
+  { id: 3, file: "makarooni.jpg" },
+  { id: 4, file: "makkara.jpg" },
+  { id: 5, file: "leipa.jpg" },
   // Add more advertisements as needed
 ];
 
@@ -27,7 +25,6 @@ export default function AdvertisementGrid({ advertisements }: AdvertisementGridP
     <div>
       <Carousel interval={3000} controls={false} indicators={false}>
         {advertisements.slice(0, 16).map((ad, index) => (
-
           <Carousel.Item key={ad.id}>
             <img
               className="d-block w-100 carousel-image"
@@ -39,7 +36,7 @@ export default function AdvertisementGrid({ advertisements }: AdvertisementGridP
             </Carousel.Caption>
           </Carousel.Item>
 
-         /* <Col key={ad.id} xs={6} sm={4} md={3} className="mb-3">
+          /* <Col key={ad.id} xs={6} sm={4} md={3} className="mb-3">
             <Card>
               <Card.Img
                 variant="top"
@@ -51,7 +48,6 @@ export default function AdvertisementGrid({ advertisements }: AdvertisementGridP
               </Card.Body>
             </Card>
           </Col> */
-
         ))}
       </Carousel>
     </div>
