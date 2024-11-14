@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import './App.css'
 import { IAnnouncement } from '../interfaces'
 import sendAnnouncement from './services/annoucement'
 
