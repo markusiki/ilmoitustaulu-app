@@ -5,10 +5,7 @@ export interface IAnnouncement {
   contact_info?: string;
   title: string;
   content: string;
-  file?: {
-    data: BinaryData;
-    type: string;
-  };
+  file?: BinaryData;
 }
 
 export interface IAdvertisement {

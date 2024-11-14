@@ -1,16 +1,10 @@
+import { IAnnouncement } from "interfaces";
 import Notice from "./Notice";
 import { Card, Row, Col } from "react-bootstrap";
 
-interface Announcement {
-  title: string;
-  content: string;
-  poster: string;
-  contact_info: string;
-}
-
 interface SectionProps {
   title: string;
-  announcements: Announcement[];
+  announcements: IAnnouncement[];
 }
 
 export default function Section({ title, announcements }: SectionProps) {
@@ -29,6 +23,7 @@ export default function Section({ title, announcements }: SectionProps) {
                   content={announcement.content}
                   poster={announcement.poster}
                   contact_info={announcement.contact_info}
+                  file={announcement.file}
                 />
               </Col>
             ))}
