@@ -3,7 +3,8 @@ import { Container, Row, Col, Button, Modal } from "react-bootstrap";
 import Section from "./Section";
 import AddAnnouncementForm from "./AddAnnouncementForm";
 import AdvertisementGrid from "./AdvertisementGrid";
-import { QRCodeSVG } from 'qrcode.react';
+import { QRCodeSVG } from "qrcode.react";
+
 import { DataFromServer, IAdvertisement, IAnnouncement } from "../../interfaces";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../custom.css';
