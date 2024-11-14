@@ -47,13 +47,13 @@ const sendContent = async (connection: WebSocket) => {
   try {
     const announcements = await getPublishedAnnouncements()
     const advertisements = await Advertisement.find({})
-    const newAnnouncmentId = getNewAnnouncementId()
+    const newAnnouncementId = getNewAnnouncementId()
     const data: DataToClients['initialData'] = {
       type: 'initialdata',
       data: {
         announcements: announcements,
         advertisements: advertisements,
-        newAnnouncmentId: newAnnouncmentId
+        newAnnouncementId: newAnnouncementId
       }
     }
     connection.send(JSON.stringify(data))

@@ -30,7 +30,7 @@ export interface DataToClients {
     data: {
       announcements: IAnnouncement[]
       advertisements: IAdvertisement[]
-      newAnnouncmentId: string
+      newAnnouncementId: string
     }
   }
   advertisementAdd: {
@@ -64,10 +64,10 @@ export interface DataToClients {
     }
   }
   types: DataToClients[
-    | 'initialData'
-    | 'advertisementAdd'
-    | 'advertisementDelete'
-    | 'announcementAdd'
-    | 'announcementDelete'
-    | 'newAnnouncementId']
+  | 'initialData'
+  | 'advertisementAdd'
+  | 'advertisementDelete'
+  | 'announcementAdd'
+  | 'announcementDelete'
+  | 'newAnnouncementId']
 }
