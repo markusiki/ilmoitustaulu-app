@@ -6,20 +6,21 @@ import AdvertisementGrid from "./AdvertisementGrid";
 import { QRCodeSVG } from "qrcode.react";
 
 import { DataFromServer, IAdvertisement, IAnnouncement } from "../../interfaces";
-import 'bootstrap/dist/css/bootstrap.min.css';
-import '../custom.css';
+import "bootstrap/dist/css/bootstrap.min.css";
+import "../custom.css";
 
 export default function NoticeBoard() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [status, setStatus] = useState("Disconnected");
   const [announcements, setAnnouncements] = useState<IAnnouncement[]>([]);
+  const [advertisements, setAdvertisements] = useState<IAdvertisement[]>([]);
   const [announcementId, setAnnouncementId] = useState<string | null>(null);
-  const advertisements = [
-    { id: 1, file: 'juusto.jpg' },
-    { id: 2, file: 'liha.jpg' },
-    { id: 3, file: 'makarooni.jpg' },
-    { id: 4, file: 'makkara.jpg' },
-    { id: 5, file: 'leipa.jpg' },
+  const demoAdvertisements = [
+    { id: 1, file: "juusto.jpg" },
+    { id: 2, file: "liha.jpg" },
+    { id: 3, file: "makarooni.jpg" },
+    { id: 4, file: "makkara.jpg" },
+    { id: 5, file: "leipa.jpg" },
     // Add more advertisements as needed
   ];
   const ws = useRef<WebSocket | null>(null);
@@ -51,7 +52,7 @@ export default function NoticeBoard() {
     if (message.type === "initialdata") {
       setAnnouncements(message.data.announcements);
       setAdvertisements(message.data.advertisements);
-      setAnnouncementId(message.data.newAnnouncmentId); // Use data.announcmentId as sent from backend
+      setAnnouncementId(message.data.newAnnouncementId); // Use data.announcmentId as sent from backend
     }
     if (message.type === "advertisementadd") {
       setAdvertisements((prev) => [...prev, message.data.advertisement]);
@@ -112,15 +113,15 @@ export default function NoticeBoard() {
     announcements.filter((announcement) => announcement.category === category);
 
   return (
-    <Container>
+    <Container fluid>
       <h1 className="custom-header text-center mb-4">Ilmoitustaulu</h1>
       <Row className="mb-4">
         <Col md={4}>
-          <AdvertisementGrid advertisements={advertisements} />
+          <AdvertisementGrid advertisements={demoAdvertisements} />
         </Col>
         <Col md={8}>
           <Section
-            title={<span className="section-title">Myynti-ilmoitukset</span>}
+            title="Myynti-ilmoitukset"
             announcements={filterAnnouncementsByCategory("myynti-ilmoitus")}
           />
         </Col>
@@ -128,15 +129,13 @@ export default function NoticeBoard() {
       <Row>
         <Col md={4} className="d-flex flex-column align-items-center justify-content-center">
           <div className="d-flex align-items-center">
-            <p className="qr-text text-center mr-3">
-              Lisää oma ilmoituksesi QR-koodilla
-            </p>
-            <QRCodeSVG value={`http://localhost:5000/new/${announcementId}/`} size={150} />
+            <p className="qr-text text-center mr-3">Lisää oma ilmoituksesi QR-koodilla</p>
+            <QRCodeSVG value={`http://192.168.1.103:5000/new/${announcementId}/`} size={150} />
           </div>
         </Col>
         <Col md={8}>
           <Section
-            title={<span className="section-title">Asiakastoiveet</span>}
+            title="Asiakastoiveet"
             announcements={filterAnnouncementsByCategory("asiakastoive")}
           />
         </Col>

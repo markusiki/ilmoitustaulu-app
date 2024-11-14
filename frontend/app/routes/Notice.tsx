@@ -12,11 +12,17 @@ export default function Notice({ title, content, poster, contact_info, file }: N
   return (
     <Card className="mb-2" style={{ height: "170px" }}>
       <Card.Body>
-        <Card.Title>{title}</Card.Title>
-        <Card.Text>{content}</Card.Text>
-        <Card.Text>{poster}</Card.Text>
-        <Card.Text>{contact_info}</Card.Text>
-        {file ? <Card.Img src={`data:image/jpeg;base64,${file}`} /> : null}
+        <Card.Title style={{ fontSize: "15px" }}>{title}</Card.Title>
+        <Card.Text style={{ fontSize: "10px" }}>{content}</Card.Text>
+        <Card.Text style={{ fontSize: "10px" }}>Ilmoittaja: {poster}</Card.Text>
+        <Card.Text style={{ fontSize: "10px" }}>Yhteystiedot: {contact_info}</Card.Text>
+        {file ? (
+          <Card.Img
+            style={{ height: "30%", width: "auto" }}
+            variant="bottom"
+            src={`data:image/jpeg;base64,${file}`}
+          />
+        ) : null}
       </Card.Body>
     </Card>
   );
