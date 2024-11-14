@@ -37,17 +37,19 @@ app.use(
   IdValidator,
   handleId,
 
-  express.static(path.join(__dirname, '../build/newannouncement'))
+  express.static(path.join(__dirname, '../build/form'))
 )
+// Serves form's satatic files
 app.use(
   '/newannouncement',
-  express.static(path.join(__dirname, '../build/newannouncement'))
+  express.static(path.join(__dirname, '../build/form'))
 )
+//for testing
 app.use(
   '/controllerview',
   express.static(path.join(__dirname, '../build/controllerview'))
 )
-app.use(express.static(path.join(__dirname, '../build/ws')))
+app.use(express.static(path.join(__dirname, '../build/client')))
 
 setAnnouncementManager()
 
