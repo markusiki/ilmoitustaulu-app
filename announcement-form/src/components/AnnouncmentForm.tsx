@@ -1,35 +1,68 @@
-import { useState, ChangeEvent, FormEvent } from "react";
-import { Form, Button } from "react-bootstrap";
-import { AnnouncementFormProps, IAnnouncement } from "../../interfaces";
+import { useState, ChangeEvent, FormEvent } from 'react'
+import { Form, Button } from 'react-bootstrap'
+import { AnnouncementFormProps, IAnnouncement } from '../../interfaces'
 
-const AnnouncementForm: React.FC<AnnouncementFormProps> = ({ handleNewAnnouncement }) => {
+const AnnouncementForm: React.FC<AnnouncementFormProps> = ({
+  handleNewAnnouncement
+}) => {
   const [formData, setFormData] = useState<IAnnouncement>({
-    category: "asiakastoive",
-    poster: "",
-    contact_info: "",
-    title: "",
-    content: "",
-  });
+    category: 'asiakastoive',
+    poster: '',
+    contact_info: '',
+    title: '',
+    content: '',
+    file: undefined
+  })
 
-  const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
+  const handleInputChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target
     setFormData((prevData) => ({
       ...prevData,
-      [name]: value,
-    }));
-  };
+      [name]: value
+    }))
+  }
+
+  const handleImageAdd = (event: ChangeEvent<HTMLInputElement>) => {
+    const input = event.target as HTMLInputElement
+    console.log(input)
+    const image = input.files?.[0]
+    if (image) {
+      const reader = new FileReader()
+      reader.onload = (event: ProgressEvent<FileReader>) => {
+        const result = event.target?.result
+        if (result) {
+          const blob = new Blob([result])
+          const blobReader = new FileReader()
+          blobReader.onload = () => {
+            const base64String = (blobReader.result as string).split(',')[1]
+            setFormData((prevData) => ({
+              ...prevData,
+              file: base64String
+            }))
+            console.log(base64String)
+          }
+          blobReader.readAsDataURL(blob)
+        }
+      }
+      reader.readAsArrayBuffer(image)
+    } else {
+      console.log('No file selected')
+    }
+  }
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    handleNewAnnouncement(formData);
+    e.preventDefault()
+    handleNewAnnouncement(formData)
     setFormData({
-      category: "asiakastoive",
-      poster: "",
-      contact_info: "",
-      title: "",
-      content: "",
-    });
-  };
+      category: 'asiakastoive',
+      poster: '',
+      contact_info: '',
+      title: '',
+      content: ''
+    })
+  }
 
   return (
     <Form onSubmit={handleSubmit}>
@@ -42,7 +75,7 @@ const AnnouncementForm: React.FC<AnnouncementFormProps> = ({ handleNewAnnounceme
             name="category"
             label="Asiakastoiveet"
             value="asiakastoive"
-            checked={formData.category === "asiakastoive"}
+            checked={formData.category === 'asiakastoive'}
             onChange={handleInputChange}
           />
           <Form.Check
@@ -51,7 +84,7 @@ const AnnouncementForm: React.FC<AnnouncementFormProps> = ({ handleNewAnnounceme
             name="category"
             label="Myynti"
             value="myynti-ilmoitus"
-            checked={formData.category === "myynti-ilmoitus"}
+            checked={formData.category === 'myynti-ilmoitus'}
             onChange={handleInputChange}
           />
         </div>
@@ -105,11 +138,21 @@ const AnnouncementForm: React.FC<AnnouncementFormProps> = ({ handleNewAnnounceme
         />
       </Form.Group>
 
+      <Form.Group controlId="file">
+        <Form.Label>Lataa kuva (valinnainen)</Form.Label>
+        <input
+          type="file"
+          name="file"
+          accept=".jpg, .jpeg, .png"
+          onChange={handleImageAdd}
+        />
+      </Form.Group>
+
       <Button variant="primary" type="submit" className="mt-3">
         Lähetä
       </Button>
     </Form>
-  );
-};
+  )
+}
 
-export default AnnouncementForm;
+export default AnnouncementForm
