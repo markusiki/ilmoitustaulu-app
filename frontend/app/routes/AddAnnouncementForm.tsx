@@ -44,31 +44,15 @@ export default function AddAnnouncementForm({ onAddAnnouncement }: AddAnnounceme
 
   return (
     <Form onSubmit={handleSubmit}>
-      <Form.Group controlId="category">
+      <Form.Group controlId="category" style={{ padding: "10px" }}>
         <Form.Label>Ilmoitusluokka</Form.Label>
-        <div>
-          <Form.Check
-            inline
-            type="radio"
-            name="category"
-            label="Asiakastoiveet"
-            value="asiakastoive"
-            checked={formData.category === "asiakastoive"}
-            onChange={handleInputChange}
-          />
-          <Form.Check
-            inline
-            type="radio"
-            name="category"
-            label="Myynti"
-            value="myynti-ilmoitus"
-            checked={formData.category === "myynti-ilmoitus"}
-            onChange={handleInputChange}
-          />
-        </div>
+        <Form.Select aria-label="asiakastoive">
+          <option value="asiakastoive">Asiakastoive</option>
+          <option value="myynti-ilmoitus" >Myynti-ilmoitus</option>
+        </Form.Select>
       </Form.Group>
 
-      <Form.Group controlId="poster">
+      <Form.Group controlId="poster" style={{ padding: "10px" }}>
         <Form.Label>Ilmoittaja</Form.Label>
         <Form.Control
           type="text"
@@ -80,7 +64,7 @@ export default function AddAnnouncementForm({ onAddAnnouncement }: AddAnnounceme
         />
       </Form.Group>
 
-      <Form.Group controlId="contact_info">
+      <Form.Group controlId="contact_info" style={{ padding: "10px" }}>
         <Form.Label>Yhteystiedot (valinnainen)</Form.Label>
         <Form.Control
           type="text"
@@ -91,7 +75,7 @@ export default function AddAnnouncementForm({ onAddAnnouncement }: AddAnnounceme
         />
       </Form.Group>
 
-      <Form.Group controlId="title">
+      <Form.Group controlId="title" style={{ padding: "10px" }}>
         <Form.Label>Ilmoituksen otsikko</Form.Label>
         <Form.Control
           type="text"
@@ -103,7 +87,7 @@ export default function AddAnnouncementForm({ onAddAnnouncement }: AddAnnounceme
         />
       </Form.Group>
 
-      <Form.Group controlId="content">
+      <Form.Group controlId="content" style={{ padding: "10px" }}>
         <Form.Label>Ilmoituksen sisältö</Form.Label>
         <Form.Control
           as="textarea"
@@ -116,7 +100,7 @@ export default function AddAnnouncementForm({ onAddAnnouncement }: AddAnnounceme
         />
       </Form.Group>
 
-      <Button variant="primary" type="submit" className="mt-3">
+      <Button variant="primary" type="submit" className="mt-3" style={{ margin: "10px" }}>
         Lähetä
       </Button>
     </Form>

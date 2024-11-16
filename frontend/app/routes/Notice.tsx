@@ -20,20 +20,20 @@ export default function Notice({
   onDelete,
 }: NoticeProps) {
   return (
-    <Card className="mb-2" style={{ height: "170px" }}>
+    <Card className="mb-2" style={{ height: "auto" }}>
       <Card.Body>
-        <Card.Title style={{ fontSize: "15px" }}>{title}</Card.Title>
+        <Card.Title style={{ fontSize: "24px" }}>{title}</Card.Title>
         {isAdmin && (
-            <Button variant="danger" size="sm" onClick={onDelete} style={{ float: "right" }}>
-              Poista
-            </Button>
+          <Button variant="danger" size="sm" onClick={onDelete} style={{ float: "right" }}>
+            Poista
+          </Button>
         )}
-        <Card.Text style={{ fontSize: "10px" }}>{content}</Card.Text>
-        <Card.Text style={{ fontSize: "10px" }}>Ilmoittaja: {poster}</Card.Text>
-        <Card.Text style={{ fontSize: "10px" }}>Yhteystiedot: {contact_info}</Card.Text>
+        <Card.Text style={{ fontSize: "13px" }}>{content}</Card.Text>
+        <Card.Text style={{ fontSize: "13px" }}>Ilmoittaja: {poster}</Card.Text>
+        <Card.Text style={{ fontSize: "13px" }}>Yhteystiedot: {contact_info}</Card.Text>
         {file ? (
           <Card.Img
-            style={{ height: "30%", width: "auto" }}
+            style={{ maxHeight: "150px", maxWidth: "100%", objectFit: "contain", marginTop: "10px" }}
             variant="bottom"
             src={`data:image/jpeg;base64,${file}`}
           />
