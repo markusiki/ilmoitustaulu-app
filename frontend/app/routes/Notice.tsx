@@ -1,4 +1,4 @@
-import { Card } from "react-bootstrap";
+import { Card, Button } from "react-bootstrap";
 
 interface NoticeProps {
   title: string;
@@ -6,13 +6,28 @@ interface NoticeProps {
   poster: string;
   contact_info?: string;
   file?: BinaryData;
+  isAdmin?: boolean;
+  onDelete?: () => void;
 }
 
-export default function Notice({ title, content, poster, contact_info, file }: NoticeProps) {
+export default function Notice({
+  title,
+  content,
+  poster,
+  contact_info,
+  file,
+  isAdmin,
+  onDelete,
+}: NoticeProps) {
   return (
     <Card className="mb-2" style={{ height: "170px" }}>
       <Card.Body>
         <Card.Title style={{ fontSize: "15px" }}>{title}</Card.Title>
+        {isAdmin && (
+            <Button variant="danger" size="sm" onClick={onDelete} style={{ float: "right" }}>
+              Poista
+            </Button>
+        )}
         <Card.Text style={{ fontSize: "10px" }}>{content}</Card.Text>
         <Card.Text style={{ fontSize: "10px" }}>Ilmoittaja: {poster}</Card.Text>
         <Card.Text style={{ fontSize: "10px" }}>Yhteystiedot: {contact_info}</Card.Text>

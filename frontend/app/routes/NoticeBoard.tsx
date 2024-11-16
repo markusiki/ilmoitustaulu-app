@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Container, Row, Col, Button, Modal } from "react-bootstrap";
+import { Container, Row, Col, Button, Modal, Form } from "react-bootstrap";
 import Section from "./Section";
 import AddAnnouncementForm from "./AddAnnouncementForm";
 import AdvertisementGrid from "./AdvertisementGrid";
@@ -15,6 +15,12 @@ export default function NoticeBoard() {
   const [announcements, setAnnouncements] = useState<IAnnouncement[]>([]);
   const [advertisements, setAdvertisements] = useState<IAdvertisement[]>([]);
   const [announcementId, setAnnouncementId] = useState<string | null>(null);
+
+  const [isAdmin, setAdmin] = useState(true);
+  const [isLoggedin, setIsLoggedin] = useState(false);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+
   const demoAdvertisements = [
     { id: 1, file: "juusto.jpg" },
     { id: 2, file: "liha.jpg" },
@@ -80,6 +86,16 @@ export default function NoticeBoard() {
     }
   };
 
+  const handleDeleteAnnouncement = (id: string) => {
+    if (ws.current) {
+      const deleteMessage = {
+        type: "announcementdelete",
+        id: id,
+      };
+      ws.current.send(JSON.stringify(deleteMessage));
+    }
+  };
+
   const handleAddAnnouncement = async (newAnnouncement: Omit<IAnnouncement, "id">) => {
     console.log("Using announcementId:", announcementId); // Log announcementId to confirm it's correct
     try {
@@ -112,9 +128,71 @@ export default function NoticeBoard() {
   const filterAnnouncementsByCategory = (category: string) =>
     announcements.filter((announcement) => announcement.category === category);
 
+  const handleLogin = () => {
+    setIsLoggedin(true);
+    console.log("Logging in with:", { username, password });
+    // Lisää kirjautumislogiikka
+  };
+
+  const handleLogout = () => {
+    setIsLoggedin(false);
+    // Lisää uloskirjautumislogiikka
+  };
+
+
+  if (!isLoggedin) {
+    return (
+      <Container className="mt-5">
+        <Row className="justify-content-md-center">
+          <Col xs={12} md={6}>
+            <h2 className="text-center mb-4">Kirjaudu sisään</h2>
+            <Form onSubmit={handleLogin}>
+              <Form.Group className="mb-3" controlId="formBasicEmail">
+                <Form.Label>Käyttätunnus</Form.Label>
+                <Form.Control
+                  type="username"
+                  placeholder="Syötä käyttätunnus"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                />
+              </Form.Group>
+
+              <Form.Group className="mb-3" controlId="formBasicPassword">
+                <Form.Label>Password</Form.Label>
+                <Form.Control
+                  type="password"
+                  placeholder="Syötä salasana"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+              </Form.Group>
+
+              <div className="d-grid gap-2">
+                <Button variant="primary" type="submit" size="lg">
+                 Kirjaudu sisään
+                </Button>
+              </div>
+            </Form>
+          </Col>
+        </Row>
+      </Container>
+    );
+  }
+
+
   return (
     <Container fluid>
       <h1 className="custom-header text-center mb-4">Ilmoitustaulu</h1>
+
+      {isAdmin ? (<div className="text-center mt-4" style={{ justifyContent: "right", display: "flex"}}>
+        <Button variant="secondary" onClick={() => setIsModalOpen(true)} style={{ margin: "5px" }}>
+          Lisää
+        </Button>
+        <Button variant="secondary" onClick={() => handleLogout()} style={{ margin: "5px" }}>
+          Kirjaudu ulos
+        </Button>
+      </div>) : null}
+
       <Row className="mb-4">
         <Col md={4}>
           <AdvertisementGrid advertisements={demoAdvertisements} />
@@ -123,6 +201,8 @@ export default function NoticeBoard() {
           <Section
             title="Myynti-ilmoitukset"
             announcements={filterAnnouncementsByCategory("myynti-ilmoitus")}
+            isAdmin={isAdmin}
+            onDelete={handleDeleteAnnouncement}
           />
         </Col>
       </Row>
@@ -137,14 +217,11 @@ export default function NoticeBoard() {
           <Section
             title="Asiakastoiveet"
             announcements={filterAnnouncementsByCategory("asiakastoive")}
+            isAdmin={isAdmin}
+            onDelete={handleDeleteAnnouncement}
           />
         </Col>
       </Row>
-      <div className="text-center mt-4">
-        <Button variant="secondary" onClick={() => setIsModalOpen(true)}>
-          Add New Announcement
-        </Button>
-      </div>
       <Modal show={isModalOpen} onHide={() => setIsModalOpen(false)} centered>
         <Modal.Header closeButton>
           <Modal.Title>Add a New Announcement</Modal.Title>
