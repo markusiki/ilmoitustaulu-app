@@ -7,6 +7,7 @@ interface AnnouncementFormData {
   contact_info: string;
   title: string;
   content: string;
+  file?: BinaryData;
 }
 
 interface AddAnnouncementFormProps {
@@ -20,6 +21,7 @@ export default function AddAnnouncementForm({ onAddAnnouncement }: AddAnnounceme
     contact_info: "",
     title: "",
     content: "",
+    file: undefined,
   });
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -28,6 +30,37 @@ export default function AddAnnouncementForm({ onAddAnnouncement }: AddAnnounceme
       ...prevData,
       [name]: value,
     }));
+  };
+
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+  
+      reader.onload = () => {
+        if (reader.result) {
+          setFormData((prevData) => ({
+            ...prevData,
+            file: reader.result.toString().split(",")[1],
+          }));
+        }
+      };
+  
+      reader.onerror = () => {
+        console.error("Failed to read file");
+        setFormData((prevData) => ({
+          ...prevData,
+          file: undefined,
+        }));
+      };
+  
+      reader.readAsDataURL(file); // Lue tiedosto Base64-muodossa
+    } else {
+      setFormData((prevData) => ({
+        ...prevData,
+        file: undefined,
+      }));
+    }
   };
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
@@ -39,6 +72,7 @@ export default function AddAnnouncementForm({ onAddAnnouncement }: AddAnnounceme
       contact_info: "",
       title: "",
       content: "",
+      file: undefined,
     });
   };
 
@@ -97,6 +131,16 @@ export default function AddAnnouncementForm({ onAddAnnouncement }: AddAnnounceme
           onChange={handleInputChange}
           required
           rows={3}
+        />
+      </Form.Group>
+
+      <Form.Group controlId="file" style={{ padding: "10px" }}>
+        <Form.Label>Liitä tiedosto (valinnainen)</Form.Label>
+        <Form.Control
+          type="file"
+          name="file"
+          accept="image/*"
+          onChange={handleFileChange}
         />
       </Form.Group>
 

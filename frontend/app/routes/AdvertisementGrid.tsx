@@ -11,15 +11,6 @@ interface AdvertisementGridProps {
   advertisements: IAdvertisement[] | { id: number; file: string }[];
 }
 
-const demoAdvertisements = [
-  { id: 1, file: "juusto.jpg" },
-  { id: 2, file: "liha.jpg" },
-  { id: 3, file: "makarooni.jpg" },
-  { id: 4, file: "makkara.jpg" },
-  { id: 5, file: "leipa.jpg" },
-  // Add more advertisements as needed
-];
-
 export default function AdvertisementGrid({ advertisements }: AdvertisementGridProps) {
   return (
     <div>
@@ -28,7 +19,7 @@ export default function AdvertisementGrid({ advertisements }: AdvertisementGridP
           <Carousel.Item key={ad.id}>
             <img
               className="d-block w-100 carousel-image"
-              src={`/adds/${ad.file}`}
+              src={`data:image/jpeg;base64,${ad.file}`}
               alt={`Advertisement ${index + 1}`}
             />
             <Carousel.Caption>

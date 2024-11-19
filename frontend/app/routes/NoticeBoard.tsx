@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Container, Row, Col, Button, Modal, Form } from "react-bootstrap";
 import Section from "./Section";
 import AddAnnouncementForm from "./AddAnnouncementForm";
+import AddAdvertisementForm from "./AddAdvertisementForm";
 import AdvertisementGrid from "./AdvertisementGrid";
 import { QRCodeSVG } from "qrcode.react";
 
@@ -11,24 +12,17 @@ import "../custom.css";
 
 export default function NoticeBoard() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAdModalOpen, setIsAdModalOpen] = useState(false);
   const [status, setStatus] = useState("Disconnected");
   const [announcements, setAnnouncements] = useState<IAnnouncement[]>([]);
   const [advertisements, setAdvertisements] = useState<IAdvertisement[]>([]);
   const [announcementId, setAnnouncementId] = useState<string | null>(null);
 
-  const [isAdmin, setAdmin] = useState(true);
+  const [isAdmin, setAdmin] = useState(false);
   const [isLoggedin, setIsLoggedin] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  const demoAdvertisements = [
-    { id: 1, file: "juusto.jpg" },
-    { id: 2, file: "liha.jpg" },
-    { id: 3, file: "makarooni.jpg" },
-    { id: 4, file: "makkara.jpg" },
-    { id: 5, file: "leipa.jpg" },
-    // Add more advertisements as needed
-  ];
   const ws = useRef<WebSocket | null>(null);
 
   useEffect(() => {
@@ -96,8 +90,24 @@ export default function NoticeBoard() {
     }
   };
 
+  const handleAddAdvertisement = (newAdvertisement: Omit<IAdvertisement, "id">) => {
+    if (ws.current) {
+      const advertisementMessage = {
+        type: "advertisementadd",
+        data: {
+          file: newAdvertisement.file,
+        },
+      };
+      console.log(newAdvertisement.file)
+      ws.current.send(JSON.stringify(advertisementMessage));
+      setIsAdModalOpen(false);
+    } else {
+      console.error("WebSocket-yhteyttä ei ole avoinna.");
+    }
+  };
+
   const handleAddAnnouncement = async (newAnnouncement: Omit<IAnnouncement, "id">) => {
-    console.log("Using announcementId:", announcementId); // Log announcementId to confirm it's correct
+    console.log(newAnnouncement);
     try {
       const initResponse = await fetch(`http://localhost:5000/new/${announcementId}/`);
       if (initResponse.ok) {
@@ -128,10 +138,35 @@ export default function NoticeBoard() {
   const filterAnnouncementsByCategory = (category: string) =>
     announcements.filter((announcement) => announcement.category === category);
 
-  const handleLogin = () => {
-    setIsLoggedin(true);
-    console.log("Logging in with:", { username, password });
-    // Lisää kirjautumislogiikka
+  const handleLogin = async (e) => {
+    e.preventDefault();
+   //setError(''); // Reset error message
+
+    try {
+      const response = await fetch('http://localhost:5000/api/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Login failed');
+      }
+
+      const data = await response.json();
+      setIsLoggedin(true);
+      console.log(data.role);
+
+      if(data.role == "admin")
+        setAdmin(true)
+
+      console.log('Login successful:', data.message);
+    } catch (err) {
+      console.error('Login error:', err.message);
+    }
   };
 
   const handleLogout = () => {
@@ -185,8 +220,11 @@ export default function NoticeBoard() {
       <h1 className="custom-header text-center mb-4">Ilmoitustaulu</h1>
 
       {isAdmin ? (<div className="text-center mt-4" style={{ justifyContent: "right", display: "flex"}}>
+        <Button variant="secondary" onClick={() => setIsAdModalOpen(true)} style={{ margin: "5px" }}>
+          Lisää Mainos
+        </Button>
         <Button variant="secondary" onClick={() => setIsModalOpen(true)} style={{ margin: "5px" }}>
-          Lisää
+          Lisää Ilmoitus
         </Button>
         <Button variant="secondary" onClick={() => handleLogout()} style={{ margin: "5px" }}>
           Kirjaudu ulos
@@ -195,7 +233,7 @@ export default function NoticeBoard() {
 
       <Row className="mb-4">
         <Col md={4}>
-          <AdvertisementGrid advertisements={demoAdvertisements} />
+          <AdvertisementGrid advertisements={advertisements} />
         </Col>
         <Col md={8}>
           <Section
@@ -224,13 +262,26 @@ export default function NoticeBoard() {
       </Row>
       <Modal show={isModalOpen} onHide={() => setIsModalOpen(false)} centered>
         <Modal.Header closeButton>
-          <Modal.Title>Add a New Announcement</Modal.Title>
+          <Modal.Title>Lisää uusi ilmoitus</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <AddAnnouncementForm
             onAddAnnouncement={(newAnnouncement) => {
               handleAddAnnouncement(newAnnouncement);
               setIsModalOpen(false);
+            }}
+          />
+        </Modal.Body>
+      </Modal>
+      <Modal show={isAdModalOpen} onHide={() => setIsAdModalOpen(false)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Lisää uusi mainos</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <AddAdvertisementForm
+            onAddAdvertisement={(newAdvertisement) => {
+              handleAddAdvertisement(newAdvertisement);
+              setIsAdModalOpen(false);
             }}
           />
         </Modal.Body>
