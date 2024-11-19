@@ -1,27 +1,15 @@
 import express from 'express'
-import { DataToClients, IAnnouncement } from '../interfaces'
+import { IAnnouncement } from '../interfaces'
 import Announcement from '../models/announcement'
-import { sendContentToAllClients } from './webSocketController'
 import mongoose, { HydratedDocument } from 'mongoose'
 import {
   clearIdTimeout,
   IdValidator,
   removeIdFromList
 } from '../utils/idManager'
-import { authorization, CustomRequest } from '../utils/middleware'
 import { handleNewAnnoucement } from '../utils/announcementManager'
 
 const announcementRouter = express.Router()
-
-announcementRouter.get('/getall', authorization, async (req, res, next) => {
-  try {
-    const announcements = await Announcement.find({})
-    res.status(200).json(announcements)
-  } catch (error) {
-    console.log(error)
-    res.status(400).json()
-  }
-})
 
 announcementRouter.post('/add/:id', IdValidator, async (req, res) => {
   try {
