@@ -2,13 +2,18 @@ import { Server as WebSocketServer, WebSocket, RawData } from 'ws'
 import { v4 as uuidv4 } from 'uuid'
 import Announcement from '../models/announcement'
 import Advertisement from '../models/advertisement'
-import { DataToClients } from '../interfaces'
+import { CustomHttpRequest, DataToClients, CustomJwtPayload } from '../interfaces'
 import { getNewAnnouncementId } from '../utils/idManager'
 import { getPublishedAnnouncements } from '../utils/announcementManager'
 
+
+interface CustomWebSocket extends WebSocket {
+  id: string
+}
+
 interface Client {
-  readyState: number
-  send(data: string): void
+  connection: CustomWebSocket
+  user: CustomHttpRequest["user"]
 }
 
 interface DataFromClient {
@@ -33,7 +38,6 @@ interface JsonData {
 
 // Maintain active connections and users
 const clients: { [userId: string]: Client } = {}
-const users: { [userId: string]: DataFromClient } = {}
 
 // Define event types
 const eventTypes = {
@@ -80,7 +84,7 @@ const sendError = async (connection: WebSocket, message: string) => {
 // Broadcast a message to all connected clients
 export const sendContentToAllClients = async (data: DataToClients['types']) => {
   for (const userId in clients) {
-    const client = clients[userId]
+    const client = clients[userId].connection
     if (client.readyState === WebSocket.OPEN) {
       client.send(JSON.stringify(data))
     }
@@ -90,10 +94,9 @@ export const sendContentToAllClients = async (data: DataToClients['types']) => {
 // Handle content update
 const processReceivedMessage = async (
   message: RawData,
-  connection: WebSocket
+  connection: CustomWebSocket
 ) => {
   const dataFromClient: DataFromClient = JSON.parse(message.toString())
-  const json: JsonData = { type: dataFromClient.type }
 
   if (dataFromClient.type === eventTypes.ADVERTISEMENT_ADD) {
     try {
@@ -167,22 +170,28 @@ const processReceivedMessage = async (
 const handleClientDisconnection = (userId: string) => {
   console.log(`${userId} disconnected.`)
   delete clients[userId]
-  delete users[userId]
 }
 
 // Handle new client connections
 export const setupWebSocket = (wss: WebSocketServer) => {
-  wss.on('connection', async (connection) => {
+  wss.on('connection', async (connection: CustomWebSocket, request: CustomHttpRequest) => {
     const userId = uuidv4()
     console.log('Received a new connection')
 
-    clients[userId] = connection
+    connection.id = userId
+    clients[userId] = { connection, user: request.user }
     console.log(`${userId} connected.`)
     sendContent(connection)
 
-    connection.on('message', (message) =>
+    connection.on('message', (message) => {
+      const userType = (Object.entries(clients).find(([id]) => id === connection.id)?.[1].user as CustomJwtPayload).role
+      if (userType !== 'admin') {
+        connection.send(JSON.stringify({ error: 'Unauthorized access' }))
+      }
+
       processReceivedMessage(message, connection)
-    )
+
+    })
     connection.on('close', () => handleClientDisconnection(userId))
   })
 }

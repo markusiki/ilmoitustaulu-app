@@ -29,7 +29,7 @@ loginRouter.post('/', async (req, res) => {
   const token = jwt.sign(userForToken, config.SECRET!)
 
   res
-    .cookie('acces_token', token, {
+    .cookie('access_token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production'
     })
