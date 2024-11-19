@@ -1,3 +1,6 @@
+import { JwtPayload } from "jsonwebtoken"
+import { IncomingMessage } from "http"
+
 export interface IAnnouncement {
   id: string
   category: 'asiakastoive' | 'myynti-ilmoitus'
@@ -70,4 +73,18 @@ export interface DataToClients {
   | 'announcementAdd'
   | 'announcementDelete'
   | 'newAnnouncementId']
+}
+
+export interface CustomJwtPayload extends JwtPayload {
+  role?: "admin" | "client"
+}
+
+export interface CustomRequest extends Request {
+  user?: string | JwtPayload
+  access_token?: string | undefined
+}
+
+export interface CustomHttpRequest extends IncomingMessage {
+  user?: string | CustomJwtPayload
+  access_token: string | undefined
 }
