@@ -1,8 +1,7 @@
 import axios from 'axios'
 import { IAnnouncement } from '../../interfaces'
 const id = window.location.pathname.split('/')[2]
-const url = 'http://192.168.1.103:5000/api/announcements/add/' + id
-
+const url = `${window.location.origin}/api/announcements/add/${id}`
 interface ServerResponse {
   message: string
 }
