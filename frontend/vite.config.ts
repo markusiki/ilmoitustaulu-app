@@ -16,7 +16,13 @@ export default defineConfig({
   ],
   server: {
     proxy: {
-      '/api': 'http://localhost:5000'
+      '/api': 'http://localhost:5000',
+      '/announcements': {
+        target: 'ws://localhost:5000/announcements',
+        ws: true,
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/announcements/, '')
+      }
     }
   }
 });
