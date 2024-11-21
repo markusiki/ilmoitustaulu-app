@@ -6,8 +6,10 @@
   "scripts": {
     "start": "cross-env NODE_ENV=production node dist/index.js",
     "dev": "cross-env NODE_ENV=development ts-node-dev src/index.ts",
+    "build": "npx tsc",
     "build:ui": "rm -rf build/client && cd ../frontend && npm install && npm run build && mkdir -p ../backend/build && cp -r build/* ../backend/build/",
     "build:form": "rm -rf build/form && cd ../announcement-form && npm install && npm run build && mkdir -p ../backend/build/form && cp -r build/* ../backend/build/form",
+    "build:full": "npm run build && npm run build:ui && npm run build:form",
     "createUser": "ts-node-dev src/createUser.js"
   },
   "author": "",

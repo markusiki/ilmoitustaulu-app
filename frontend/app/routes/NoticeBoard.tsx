@@ -45,7 +45,7 @@ export default function NoticeBoard() {
     return () => {
       ws.current?.close();
     };
-  }, []);
+  }, [isLoggedin]);
 
   const handleIncomingMessage = (message: DataFromServer) => {
     console.log("Received data:", message); // Log data to confirm structure
@@ -115,6 +115,7 @@ export default function NoticeBoard() {
           `http://localhost:5000/api/announcements/add/${announcementId}`,
           {
             method: "POST",
+            credentials: "include",
             headers: {
               "Content-Type": "application/json",
             },
@@ -148,15 +149,16 @@ export default function NoticeBoard() {
         headers: {
           "Content-Type": "application/json",
         },
+        credentials: "include",
         body: JSON.stringify({ username, password }),
       });
 
-      if (!response.ok) {
+      if (response.status !== 200) {
         const errorData = await response.json();
         throw new Error(errorData.error || "Login failed");
       }
 
-      const data = await response.json();
+      const data: Response = await response.json();
       setIsLoggedin(true);
       console.log(data.role);
 
