@@ -5,7 +5,7 @@ import AddAnnouncementForm from "./AddAnnouncementForm";
 import AddAdvertisementForm from "./AddAdvertisementForm";
 import AdvertisementGrid from "./AdvertisementGrid";
 import { QRCodeSVG } from "qrcode.react";
-
+import config from "../config";
 import { DataFromServer, IAdvertisement, IAnnouncement } from "../../interfaces";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../custom.css";
@@ -98,7 +98,7 @@ export default function NoticeBoard() {
           file: newAdvertisement.file,
         },
       };
-      console.log(newAdvertisement.file)
+      console.log(newAdvertisement.file);
       ws.current.send(JSON.stringify(advertisementMessage));
       setIsAdModalOpen(false);
     } else {
@@ -140,32 +140,31 @@ export default function NoticeBoard() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-   //setError(''); // Reset error message
+    //setError(''); // Reset error message
 
     try {
-      const response = await fetch('http://localhost:5000/api/login', {
-        method: 'POST',
+      const response = await fetch("http://localhost:5000/api/login", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ username, password }),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || 'Login failed');
+        throw new Error(errorData.error || "Login failed");
       }
 
       const data = await response.json();
       setIsLoggedin(true);
       console.log(data.role);
 
-      if(data.role == "admin")
-        setAdmin(true)
+      if (data.role == "admin") setAdmin(true);
 
-      console.log('Login successful:', data.message);
+      console.log("Login successful:", data.message);
     } catch (err) {
-      console.error('Login error:', err.message);
+      console.error("Login error:", err.message);
     }
   };
 
@@ -173,7 +172,6 @@ export default function NoticeBoard() {
     setIsLoggedin(false);
     // Lisää uloskirjautumislogiikka
   };
-
 
   if (!isLoggedin) {
     return (
@@ -204,7 +202,7 @@ export default function NoticeBoard() {
 
               <div className="d-grid gap-2">
                 <Button variant="primary" type="submit" size="lg">
-                 Kirjaudu sisään
+                  Kirjaudu sisään
                 </Button>
               </div>
             </Form>
@@ -214,22 +212,31 @@ export default function NoticeBoard() {
     );
   }
 
-
   return (
     <Container fluid>
       <h1 className="custom-header text-center mb-4">Ilmoitustaulu</h1>
 
-      {isAdmin ? (<div className="text-center mt-4" style={{ justifyContent: "right", display: "flex"}}>
-        <Button variant="secondary" onClick={() => setIsAdModalOpen(true)} style={{ margin: "5px" }}>
-          Lisää Mainos
-        </Button>
-        <Button variant="secondary" onClick={() => setIsModalOpen(true)} style={{ margin: "5px" }}>
-          Lisää Ilmoitus
-        </Button>
-        <Button variant="secondary" onClick={() => handleLogout()} style={{ margin: "5px" }}>
-          Kirjaudu ulos
-        </Button>
-      </div>) : null}
+      {isAdmin ? (
+        <div className="text-center mt-4" style={{ justifyContent: "right", display: "flex" }}>
+          <Button
+            variant="secondary"
+            onClick={() => setIsAdModalOpen(true)}
+            style={{ margin: "5px" }}
+          >
+            Lisää Mainos
+          </Button>
+          <Button
+            variant="secondary"
+            onClick={() => setIsModalOpen(true)}
+            style={{ margin: "5px" }}
+          >
+            Lisää Ilmoitus
+          </Button>
+          <Button variant="secondary" onClick={() => handleLogout()} style={{ margin: "5px" }}>
+            Kirjaudu ulos
+          </Button>
+        </div>
+      ) : null}
 
       <Row className="mb-4">
         <Col md={4}>
@@ -248,7 +255,7 @@ export default function NoticeBoard() {
         <Col md={4} className="d-flex flex-column align-items-center justify-content-center">
           <div className="d-flex align-items-center">
             <p className="qr-text text-center mr-3">Lisää oma ilmoituksesi QR-koodilla</p>
-            <QRCodeSVG value={`http://192.168.1.103:5000/new/${announcementId}/`} size={150} />
+            <QRCodeSVG value={`${config.host}/new/${announcementId}/`} size={150} />
           </div>
         </Col>
         <Col md={8}>
