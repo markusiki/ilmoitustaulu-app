@@ -26,7 +26,7 @@ export default function NoticeBoard() {
   const ws = useRef<WebSocket | null>(null);
 
   useEffect(() => {
-    ws.current = new WebSocket("ws://localhost:5000/announcements/");
+    ws.current = new WebSocket(`ws://${location.host}/announcements/`);
     ws.current.onopen = () => {
       setStatus("Connected");
       console.log("Connected to WebSocket server");
