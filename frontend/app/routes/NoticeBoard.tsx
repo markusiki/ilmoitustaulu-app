@@ -5,6 +5,7 @@ import AddAnnouncementForm from "./AddAnnouncementForm";
 import AddAdvertisementForm from "./AddAdvertisementForm";
 import AdvertisementGrid from "./AdvertisementGrid";
 import { QRCodeSVG } from "qrcode.react";
+import config from "../config";
 import { DataFromServer, IAdvertisement, IAnnouncement } from "../../interfaces";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../custom.css";
@@ -256,7 +257,7 @@ export default function NoticeBoard() {
         <Col md={4} className="d-flex flex-column align-items-center justify-content-center">
           <div className="d-flex align-items-center">
             <p className="qr-text text-center mr-3">Lisää oma ilmoituksesi QR-koodilla</p>
-            <QRCodeSVG value={`http://192.168.1.103:5000/new/${announcementId}/`} size={150} />
+            <QRCodeSVG value={`${config.host}/new/${announcementId}/`} size={150} />
           </div>
         </Col>
         <Col md={8}>
