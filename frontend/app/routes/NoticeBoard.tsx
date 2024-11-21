@@ -109,19 +109,16 @@ export default function NoticeBoard() {
   const handleAddAnnouncement = async (newAnnouncement: Omit<IAnnouncement, "id">) => {
     console.log(newAnnouncement);
     try {
-      const initResponse = await fetch(`http://localhost:5000/new/${announcementId}/`);
+      const initResponse = await fetch(`/new/${announcementId}/`);
       if (initResponse.ok) {
-        const response = await fetch(
-          `http://localhost:5000/api/announcements/add/${announcementId}`,
-          {
-            method: "POST",
-            credentials: "include",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(newAnnouncement),
-          }
-        );
+        const response = await fetch(`/api/announcements/add/${announcementId}`, {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(newAnnouncement),
+        });
         if (response.ok) {
           console.log("Announcement saved and broadcasted.");
           setIsModalOpen(false);
@@ -144,7 +141,7 @@ export default function NoticeBoard() {
     //setError(''); // Reset error message
 
     try {
-      const response = await fetch("http://localhost:5000/api/login", {
+      const response = await fetch("/api/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
