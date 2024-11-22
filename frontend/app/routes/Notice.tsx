@@ -20,79 +20,66 @@ export default function Notice({
   onDelete,
 }: NoticeProps) {
   return (
-    <Card
-      className="mb-3 shadow-sm"
+<Card
+  className="mb-4 shadow-sm"
+  style={{
+    width: "100%",
+    height: "250px",
+    border: "2px solid #4CAF50",
+    borderRadius: "15px",
+    overflow: "hidden",
+    padding: "0px",
+    backgroundColor: "#f9f9f9",
+    position: "relative", // Tarvitaan absoluuttisesti sijoitettua nappia varten
+  }}
+>
+  {/* Admin-painike yläkulmassa */}
+  {isAdmin && onDelete && (
+    <Button
+      variant="danger"
+      size="sm"
+      onClick={onDelete}
       style={{
-        width: "100%",
-        maxWidth: "350px",
-        height: "400px",
-        borderRadius: "10px",
-        overflow: "hidden",
-        display: "flex",
-        flexDirection: "column",
+        position: "absolute",
+        top: "10px",
+        right: "10px",
+        zIndex: 10,
+        width: "70px",
       }}
     >
-      {/* Image Section */}
-      {file && (
-        <Card.Img
-          variant="top"
+      Poista
+    </Button>
+  )}
+
+  <Card.Body style={{ display: "flex", flexDirection: "row" }}>
+    <div style={{ flex: 2, paddingRight: "10px" }}>
+      <p style={{ marginBottom: "5px" }}>Ilmoittaja: {poster}</p>
+      {contact_info && (
+        <>
+          <p style={{ marginBottom: "5px" }}>Yhteystiedot: {contact_info}</p>
+        </>
+      )}
+      <p style={{ fontWeight: "bold", fontSize: "18px", marginBottom: "10px" }}>
+        {title}
+      </p>
+      <p style={{ fontSize: "14px", marginBottom: "0" }}>{content}</p>
+    </div>
+
+    {file && (
+      <div style={{ flex: 1, textAlign: "center" }}>
+        <img
           src={`data:image/jpeg;base64,${file}`}
+          alt="Kuva"
           style={{
+            maxWidth: "100%",
             maxHeight: "200px",
             objectFit: "cover",
+            border: "1px solid #ccc",
           }}
-          alt={title}
         />
-      )}
-
-      {/* Card Body */}
-      <Card.Body
-        style={{
-          flex: "1 1 auto",
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "space-between",
-        }}
-      >
-        <div>
-          {/* Title */}
-          <Card.Title style={{ fontSize: "20px", fontWeight: "bold" }}>
-            {title}
-          </Card.Title>
-
-          {/* Content */}
-          <Card.Text style={{ fontSize: "14px", marginBottom: "8px" }}>
-            {content}
-          </Card.Text>
-
-          {/* Poster */}
-          <Card.Text style={{ fontSize: "13px", color: "#666" }}>
-            Ilmoittaja: <strong>{poster}</strong>
-          </Card.Text>
-
-          {/* Contact Info */}
-          {contact_info && (
-            <Card.Text style={{ fontSize: "13px", color: "#666" }}>
-              Yhteystiedot: <strong>{contact_info}</strong>
-            </Card.Text>
-          )}
-        </div>
-
-        {/* Admin Button */}
-        {isAdmin && (
-          <Button
-            variant="danger"
-            size="sm"
-            onClick={onDelete}
-            className="mt-3"
-            style={{
-              alignSelf: "flex-end",
-            }}
-          >
-            Poista
-          </Button>
-        )}
-      </Card.Body>
-    </Card>
+      </div>
+    )}
+  </Card.Body>
+</Card>
   );
-}
+} 
