@@ -16,7 +16,7 @@ export default function Section({
   onDelete,
 }: SectionProps & { isAdmin: boolean; onDelete: (id: string) => void }) {
   return (
-    <Card className="mb-4" style={{ height: "100%" }}>
+    <Card className="mb-4" style={{  }}>
       <Card.Header>
         <h1 className="section-title">{title}</h1>
       </Card.Header>

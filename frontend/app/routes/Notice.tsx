@@ -20,24 +20,78 @@ export default function Notice({
   onDelete,
 }: NoticeProps) {
   return (
-    <Card className="mb-2" style={{ height: "auto" }}>
-      <Card.Body>
-        <Card.Title style={{ fontSize: "24px" }}>{title}</Card.Title>
+    <Card
+      className="mb-3 shadow-sm"
+      style={{
+        width: "100%",
+        maxWidth: "350px",
+        height: "400px",
+        borderRadius: "10px",
+        overflow: "hidden",
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
+      {/* Image Section */}
+      {file && (
+        <Card.Img
+          variant="top"
+          src={`data:image/jpeg;base64,${file}`}
+          style={{
+            maxHeight: "200px",
+            objectFit: "cover",
+          }}
+          alt={title}
+        />
+      )}
+
+      {/* Card Body */}
+      <Card.Body
+        style={{
+          flex: "1 1 auto",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-between",
+        }}
+      >
+        <div>
+          {/* Title */}
+          <Card.Title style={{ fontSize: "20px", fontWeight: "bold" }}>
+            {title}
+          </Card.Title>
+
+          {/* Content */}
+          <Card.Text style={{ fontSize: "14px", marginBottom: "8px" }}>
+            {content}
+          </Card.Text>
+
+          {/* Poster */}
+          <Card.Text style={{ fontSize: "13px", color: "#666" }}>
+            Ilmoittaja: <strong>{poster}</strong>
+          </Card.Text>
+
+          {/* Contact Info */}
+          {contact_info && (
+            <Card.Text style={{ fontSize: "13px", color: "#666" }}>
+              Yhteystiedot: <strong>{contact_info}</strong>
+            </Card.Text>
+          )}
+        </div>
+
+        {/* Admin Button */}
         {isAdmin && (
-          <Button variant="danger" size="sm" onClick={onDelete} style={{ float: "right" }}>
+          <Button
+            variant="danger"
+            size="sm"
+            onClick={onDelete}
+            className="mt-3"
+            style={{
+              alignSelf: "flex-end",
+            }}
+          >
             Poista
           </Button>
         )}
-        <Card.Text style={{ fontSize: "13px" }}>{content}</Card.Text>
-        <Card.Text style={{ fontSize: "13px" }}>Ilmoittaja: {poster}</Card.Text>
-        <Card.Text style={{ fontSize: "13px" }}>Yhteystiedot: {contact_info}</Card.Text>
-        {file ? (
-          <Card.Img
-            style={{ maxHeight: "150px", maxWidth: "100%", objectFit: "contain", marginTop: "10px" }}
-            variant="bottom"
-            src={`data:image/jpeg;base64,${file}`}
-          />
-        ) : null}
       </Card.Body>
     </Card>
   );

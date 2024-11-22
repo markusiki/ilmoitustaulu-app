@@ -80,6 +80,16 @@ export default function NoticeBoard() {
     }
   };
 
+  const handleDeleteAd = (id: string) => {
+    if (ws.current) {
+      const deleteMessage = {
+        type: "advertisementdelete",
+        id: id,
+      };
+      ws.current.send(JSON.stringify(deleteMessage));
+    }
+  };
+
   const handleDeleteAnnouncement = (id: string) => {
     if (ws.current) {
       const deleteMessage = {
@@ -237,10 +247,25 @@ export default function NoticeBoard() {
         </div>
       ) : null}
 
+
       <Row className="mb-4">
-        <Col md={4}>
-          <AdvertisementGrid advertisements={advertisements} />
+        <Col md={4} className="d-flex flex-column align-items-center">
+          <div className="w-100 mb-4">
+            <AdvertisementGrid advertisements={advertisements} isAdmin={isAdmin} onDelete={handleDeleteAd}/>
+          </div>
+          {!isAdmin ? (
+          <div
+            className="d-flex flex-column align-items-center"
+            style={{ width: "100%" }}
+          >
+            <p className="qr-text text-center mb-2 font-weight-bold">
+              Lisää oma ilmoituksesi QR-koodilla
+            </p>
+            <QRCodeSVG value={`${config.host}/new/${announcementId}/`} size={180} />
+          </div>
+            ) : null}
         </Col>
+
         <Col md={8}>
           <Section
             title="Myynti-ilmoitukset"
@@ -248,24 +273,20 @@ export default function NoticeBoard() {
             isAdmin={isAdmin}
             onDelete={handleDeleteAnnouncement}
           />
-        </Col>
-      </Row>
-      <Row>
-        <Col md={4} className="d-flex flex-column align-items-center justify-content-center">
-          <div className="d-flex align-items-center">
-            <p className="qr-text text-center mr-3">Lisää oma ilmoituksesi QR-koodilla</p>
-            <QRCodeSVG value={`${config.host}/new/${announcementId}/`} size={150} />
+
+          <div className="mt-4">
+            <Section
+              title="Asiakastoiveet"
+              announcements={filterAnnouncementsByCategory("asiakastoive")}
+              isAdmin={isAdmin}
+              onDelete={handleDeleteAnnouncement}
+            />
           </div>
         </Col>
-        <Col md={8}>
-          <Section
-            title="Asiakastoiveet"
-            announcements={filterAnnouncementsByCategory("asiakastoive")}
-            isAdmin={isAdmin}
-            onDelete={handleDeleteAnnouncement}
-          />
-        </Col>
       </Row>
+
+
+
       <Modal show={isModalOpen} onHide={() => setIsModalOpen(false)} centered>
         <Modal.Header closeButton>
           <Modal.Title>Lisää uusi ilmoitus</Modal.Title>

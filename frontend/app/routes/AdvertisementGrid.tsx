@@ -1,7 +1,7 @@
 import React from "react";
 import { Carousel } from "react-bootstrap";
 
-import { Row, Col, Card } from "react-bootstrap";
+import { Row, Col, Card, Button } from "react-bootstrap";
 
 import { IAdvertisement } from "../../interfaces";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -9,38 +9,75 @@ import "../custom.css";
 
 interface AdvertisementGridProps {
   advertisements: IAdvertisement[] | { id: number; file: string }[];
+  isAdmin?: boolean;
+  onDelete?: (id: number) => void;
 }
 
-export default function AdvertisementGrid({ advertisements }: AdvertisementGridProps) {
+export default function AdvertisementGrid({
+  advertisements,
+  isAdmin = false,
+  onDelete,
+}: AdvertisementGridProps) {
   return (
     <div>
-      <Carousel interval={3000} controls={false} indicators={false}>
-        {advertisements.slice(0, 16).map((ad, index) => (
-          <Carousel.Item key={ad.id}>
-            <img
-              className="d-block w-100 carousel-image"
-              src={`data:image/jpeg;base64,${ad.file}`}
-              alt={`Advertisement ${index + 1}`}
-            />
-            <Carousel.Caption>
-              <p>tekstiä</p>
-            </Carousel.Caption>
-          </Carousel.Item>
-
-          /* <Col key={ad.id} xs={6} sm={4} md={3} className="mb-3">
-            <Card>
+      {isAdmin ? (
+        // Admin view Grid
+        <div
+          className="d-flex flex-wrap"
+          style={{ gap: "15px", justifyContent: "space-between" }}
+        >
+          {advertisements.map((ad) => (
+            <Card
+              key={ad.id}
+              className="p-3 shadow-sm"
+              style={{
+                flex: "0 0 calc(50% - 15px)",
+                borderRadius: "10px",
+                position: "relative",
+              }}
+            >
               <Card.Img
                 variant="top"
                 src={`data:image/jpeg;base64,${ad.file}`}
+                alt="Advertisement"
+                style={{ height: "150px", objectFit: "cover" }}
+              />
+              {onDelete && (
+                <Button
+                  variant="danger"
+                  size="sm"
+                  onClick={() => {
+                    console.log("Delete button clicked for ad ID:", ad.id);
+                    onDelete(ad.id);
+                  }}
+                  style={{
+                    position: "absolute",
+                    top: "10px",
+                    right: "10px",
+                    borderRadius: "5px",
+                  }}
+                >
+                  Poista
+                </Button>
+              )}
+            </Card>
+          ))}
+        </div>
+      ) : (
+
+        // Non-admin view Carousel
+        <Carousel interval={3000} controls={false} indicators={false}>
+          {advertisements.map((ad, index) => (
+            <Carousel.Item key={ad.id}>
+              <img
+                className="d-block w-100 carousel-image"
+                src={`data:image/jpeg;base64,${ad.file}`}
                 alt={`Advertisement ${index + 1}`}
               />
-              <Card.Body>
-                <Card.Text>tekstiä</Card.Text>
-              </Card.Body>
-            </Card>
-          </Col> */
-        ))}
-      </Carousel>
+            </Carousel.Item>
+          ))}
+        </Carousel>
+      )}
     </div>
   );
 }
