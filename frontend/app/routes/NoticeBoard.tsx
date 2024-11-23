@@ -223,7 +223,7 @@ export default function NoticeBoard() {
 
   return (
     <Container fluid>
-      <h1 className="custom-header text-center mb-4">Ilmoitustaulu</h1>
+      { /* <h1 className="custom-header text-center mb-4">Ilmoitustaulu</h1> */ }
 
       {isAdmin ? (
         <div className="text-center mt-4" style={{ justifyContent: "right", display: "flex" }}>
@@ -248,20 +248,20 @@ export default function NoticeBoard() {
       ) : null}
 
 
-      <Row className="mb-4">
+      <Row className="mb-4" style={{ paddingTop: "20px" }}>
         <Col md={4} className="d-flex flex-column align-items-center">
-          <div className="w-100 mb-4">
+          <div className="w-100 mb-4" style={{ paddingTop: "15px" }}>
             <AdvertisementGrid advertisements={advertisements} isAdmin={isAdmin} onDelete={handleDeleteAd}/>
           </div>
           {!isAdmin ? (
           <div
-            className="d-flex flex-column align-items-center"
-            style={{ width: "100%" }}
+            className="d-flex flex-row align-items-center"
+            style={{ width: "100%", paddingTop: "50px", justifyContent: "center" }}
           >
-            <p className="qr-text text-center mb-2 font-weight-bold">
+            <p className="qr-text text-center mb-3 font-weight-bold">
               Lisää oma ilmoituksesi QR-koodilla
             </p>
-            <QRCodeSVG value={`${config.host}/new/${announcementId}/`} size={180} />
+            <QRCodeSVG value={`${config.host}/new/${announcementId}/`} size={200} />
           </div>
             ) : null}
         </Col>
@@ -270,6 +270,7 @@ export default function NoticeBoard() {
           <Section
             title="Myynti-ilmoitukset"
             announcements={filterAnnouncementsByCategory("myynti-ilmoitus")}
+            //announcements={filterAnnouncementsByCategory("asiakastoive")}
             isAdmin={isAdmin}
             onDelete={handleDeleteAnnouncement}
           />

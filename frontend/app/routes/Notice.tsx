@@ -24,8 +24,8 @@ export default function Notice({
   className="mb-4 shadow-sm"
   style={{
     width: "100%",
-    height: "250px",
-    border: "2px solid #4CAF50",
+    height: "200px",
+    border: "2px solid #f4e975",
     borderRadius: "15px",
     overflow: "hidden",
     padding: "0px",
@@ -72,7 +72,7 @@ export default function Notice({
           alt="Kuva"
           style={{
             maxWidth: "100%",
-            maxHeight: "200px",
+            maxHeight: "180px",
             objectFit: "cover",
             border: "1px solid #ccc",
           }}
