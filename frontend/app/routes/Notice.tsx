@@ -72,7 +72,7 @@ export default function Notice({
           alt="Kuva"
           style={{
             maxWidth: "100%",
-            maxHeight: "180px",
+            maxHeight: "160px",
             objectFit: "cover",
             border: "1px solid #ccc",
           }}

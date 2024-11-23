@@ -248,41 +248,61 @@ export default function NoticeBoard() {
       ) : null}
 
 
-      <Row className="mb-4" style={{ paddingTop: "20px" }}>
-        <Col md={4} className="d-flex flex-column align-items-center">
-          <div className="w-100 mb-4" style={{ paddingTop: "15px" }}>
-            <AdvertisementGrid advertisements={advertisements} isAdmin={isAdmin} onDelete={handleDeleteAd}/>
-          </div>
-          {!isAdmin ? (
-          <div
-            className="d-flex flex-row align-items-center"
-            style={{ width: "100%", paddingTop: "50px", justifyContent: "center" }}
-          >
-            <p className="qr-text text-center mb-3 font-weight-bold">
-              Lisää oma ilmoituksesi QR-koodilla
-            </p>
-            <QRCodeSVG value={`${config.host}/new/${announcementId}/`} size={200} />
-          </div>
-            ) : null}
-        </Col>
+      <Row c  className="mb-4 justify-content-center align-items-center"
+  style={{
+    paddingTop: "20px",
+    height: "100%", // Ensure it takes available space
+  }}
+>
+  <Col
+    md={4}
+    className="d-flex flex-column justify-content-center align-items-center"
+    style={{ height: "100%" }} // Ensure the content aligns within its column
+  >
+    <div className="w-100 mb-4" style={{ paddingTop: "15px" }}>
+      <AdvertisementGrid
+        advertisements={advertisements}
+        isAdmin={isAdmin}
+        onDelete={handleDeleteAd}
+      />
+    </div>
+    {!isAdmin ? (
+      <div
+        className="d-flex align-items-center"
+        style={{
+          width: "100%",
+          paddingTop: "50px",
+          justifyContent: "center",
+        }}
+      >
+        <p className="qr-text text-center mb-3 font-weight-bold">
+          Lisää oma ilmoituksesi QR-koodilla
+        </p>
+        <QRCodeSVG value={`${config.host}/new/${announcementId}/`} size={200} />
+      </div>
+    ) : null}
+  </Col>
 
-        <Col md={8}>
-          <Section
-            title="Myynti-ilmoitukset"
-            announcements={filterAnnouncementsByCategory("myynti-ilmoitus")}
-            //announcements={filterAnnouncementsByCategory("asiakastoive")}
-            isAdmin={isAdmin}
-            onDelete={handleDeleteAnnouncement}
-          />
-
-          <div className="mt-4">
-            <Section
-              title="Asiakastoiveet"
-              announcements={filterAnnouncementsByCategory("asiakastoive")}
-              isAdmin={isAdmin}
-              onDelete={handleDeleteAnnouncement}
-            />
-          </div>
+        <Col md={8}> 
+          <Row className="d-flex flex-column align-items-center justify-content-center">
+            <Col xs={12} className="my-4">
+              <Section
+                title="Myynti-ilmoitukset"
+                announcements={filterAnnouncementsByCategory("myynti-ilmoitus")}
+                //announcements={filterAnnouncementsByCategory("asiakastoive")}
+                isAdmin={isAdmin}
+                onDelete={handleDeleteAnnouncement}
+              />
+            </Col>
+            <Col xs={12}>
+              <Section
+                title="Asiakastoiveet"
+                announcements={filterAnnouncementsByCategory("asiakastoive")}
+                isAdmin={isAdmin}
+                onDelete={handleDeleteAnnouncement}
+              />
+            </Col>
+          </Row>
         </Col>
       </Row>
 

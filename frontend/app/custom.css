@@ -134,3 +134,18 @@ button:hover {
   margin-bottom: 20px; /* Add margin at the bottom */
   text-align: center; /* Center text */
 }
+
+@media (max-width: 768px) {
+  .section-title {
+    font-size: 1.5rem;
+    text-align: center;
+  }
+
+  .qr-text {
+    font-size: 1rem;
+  }
+
+  .card {
+    margin: 10px auto;
+  }
+}
