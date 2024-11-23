@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { IAnnouncement } from '../interfaces'
 import sendAnnouncement from './services/annoucement'
-
+import 'bootstrap/dist/css/bootstrap.min.css';
 import AnnouncmentForm from './components/AnnouncmentForm'
 
 const App = () => {

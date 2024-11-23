@@ -1,5 +1,5 @@
 import { useState, ChangeEvent, FormEvent } from 'react'
-import { Form, Button } from 'react-bootstrap'
+import { Form, Button, Container, Row, Col } from 'react-bootstrap'
 import { AnnouncementFormProps, IAnnouncement } from '../../interfaces'
 
 const AnnouncementForm: React.FC<AnnouncementFormProps> = ({
@@ -65,94 +65,89 @@ const AnnouncementForm: React.FC<AnnouncementFormProps> = ({
   }
 
   return (
-    <Form onSubmit={handleSubmit}>
-      <Form.Group controlId="category">
-        <Form.Label>Ilmoitusluokka</Form.Label>
-        <div>
-          <Form.Check
-            inline
-            type="radio"
-            name="category"
-            label="Asiakastoiveet"
-            value="asiakastoive"
-            checked={formData.category === 'asiakastoive'}
-            onChange={handleInputChange}
-          />
-          <Form.Check
-            inline
-            type="radio"
-            name="category"
-            label="Myynti"
-            value="myynti-ilmoitus"
-            checked={formData.category === 'myynti-ilmoitus'}
-            onChange={handleInputChange}
-          />
-        </div>
-      </Form.Group>
+    <Container className="mt-5 mb-5">
+      <Row className="justify-content-center">
+        <Col md={8} lg={6}>
+          <h2 className="text-center mb-4">Uusi ilmoitus</h2>
+          <Form onSubmit={handleSubmit} className="shadow p-4 rounded bg-light">
+          <Form.Group controlId="category" style={{ padding: "0px" }}>
+            <Form.Label>Ilmoitusluokka</Form.Label>
+            <Form.Select aria-label="asiakastoive">
+              <option value="asiakastoive">Asiakastoive</option>
+              <option value="myynti-ilmoitus" >Myynti-ilmoitus</option>
+            </Form.Select>
+          </Form.Group>
 
-      <Form.Group controlId="poster">
-        <Form.Label>Ilmoittaja</Form.Label>
-        <Form.Control
-          type="text"
-          name="poster"
-          placeholder="Ilmoittaja"
-          value={formData.poster}
-          onChange={handleInputChange}
-          required
-        />
-      </Form.Group>
+            <Form.Group controlId="poster" className="mt-3">
+              <Form.Label>Ilmoittaja</Form.Label>
+              <Form.Control
+                type="text"
+                name="poster"
+                placeholder="Ilmoittaja"
+                value={formData.poster}
+                onChange={handleInputChange}
+                required
+              />
+            </Form.Group>
 
-      <Form.Group controlId="contact_info">
-        <Form.Label>Yhteystiedot (valinnainen)</Form.Label>
-        <Form.Control
-          type="text"
-          name="contact_info"
-          placeholder="Yhteystiedot (valinnainen)"
-          value={formData.contact_info}
-          onChange={handleInputChange}
-        />
-      </Form.Group>
+            <Form.Group controlId="contact_info" className="mt-3">
+              <Form.Label>Yhteystiedot (valinnainen)</Form.Label>
+              <Form.Control
+                type="text"
+                name="contact_info"
+                placeholder="Yhteystiedot (valinnainen)"
+                value={formData.contact_info}
+                onChange={handleInputChange}
+              />
+            </Form.Group>
 
-      <Form.Group controlId="title">
-        <Form.Label>Ilmoituksen otsikko</Form.Label>
-        <Form.Control
-          type="text"
-          name="title"
-          placeholder="Ilmoituksen otsikko"
-          value={formData.title}
-          onChange={handleInputChange}
-          required
-        />
-      </Form.Group>
+            <Form.Group controlId="title" className="mt-3">
+              <Form.Label>Ilmoituksen otsikko</Form.Label>
+              <Form.Control
+                type="text"
+                name="title"
+                placeholder="Ilmoituksen otsikko"
+                value={formData.title}
+                onChange={handleInputChange}
+                required
+              />
+            </Form.Group>
 
-      <Form.Group controlId="content">
-        <Form.Label>Ilmoituksen sisältö</Form.Label>
-        <Form.Control
-          as="textarea"
-          name="content"
-          placeholder="Ilmoituksen sisältö"
-          value={formData.content}
-          onChange={handleInputChange}
-          required
-          rows={3}
-        />
-      </Form.Group>
+            <Form.Group controlId="content" className="mt-3">
+              <Form.Label>Ilmoituksen sisältö</Form.Label>
+              <Form.Control
+                as="textarea"
+                name="content"
+                placeholder="Ilmoituksen sisältö"
+                value={formData.content}
+                onChange={handleInputChange}
+                required
+                rows={3}
+              />
+            </Form.Group>
 
-      <Form.Group controlId="file">
-        <Form.Label>Lataa kuva (valinnainen)</Form.Label>
-        <input
-          type="file"
-          name="file"
-          accept=".jpg, .jpeg, .png"
-          onChange={handleImageAdd}
-        />
-      </Form.Group>
+            <Form.Group controlId="file" className="mt-3">
+              <Form.Label>Lataa kuva (valinnainen)</Form.Label>
+              <Form.Control
+                type="file"
+                name="file"
+                accept=".jpg, .jpeg, .png"
+                onChange={handleImageAdd}
+              />
+            </Form.Group>
 
-      <Button variant="primary" type="submit" className="mt-3">
-        Lähetä
-      </Button>
-    </Form>
-  )
-}
+            <Button
+              variant="primary"
+              type="submit"
+              className="mt-4 w-100"
+            >
+              Lähetä
+            </Button>
+          </Form>
+        </Col>
+      </Row>
+    </Container>
+  );
+};
 
-export default AnnouncementForm
+export default AnnouncementForm;
