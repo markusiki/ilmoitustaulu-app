@@ -15,14 +15,14 @@ const AnnouncementForm: React.FC<AnnouncementFormProps> = ({
   })
 
   const handleInputChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
-    const { name, value } = e.target
+    const { name, value } = e.target;
     setFormData((prevData) => ({
       ...prevData,
-      [name]: value
-    }))
-  }
+      [name]: value,
+    }));
+  };
 
   const handleImageAdd = (event: ChangeEvent<HTMLInputElement>) => {
     const input = event.target as HTMLInputElement
@@ -70,13 +70,17 @@ const AnnouncementForm: React.FC<AnnouncementFormProps> = ({
         <Col md={8} lg={6}>
           <h2 className="text-center mb-4">Uusi ilmoitus</h2>
           <Form onSubmit={handleSubmit} className="shadow p-4 rounded bg-light">
-          <Form.Group controlId="category" style={{ padding: "0px" }}>
-            <Form.Label>Ilmoitusluokka</Form.Label>
-            <Form.Select aria-label="asiakastoive">
-              <option value="asiakastoive">Asiakastoive</option>
-              <option value="myynti-ilmoitus" >Myynti-ilmoitus</option>
-            </Form.Select>
-          </Form.Group>
+            <Form.Group controlId="category" className="mb-3">
+              <Form.Label>Ilmoitusluokka</Form.Label>
+              <Form.Select
+                name="category"
+                value={formData.category} // Sidottu lomakkeen tilaan
+                onChange={handleInputChange} // Päivittää tilan valinnan mukaan
+              >
+                <option value="asiakastoive">Asiakastoive</option>
+                <option value="myynti-ilmoitus">Myynti-ilmoitus</option>
+              </Form.Select>
+            </Form.Group>
 
             <Form.Group controlId="poster" className="mt-3">
               <Form.Label>Ilmoittaja</Form.Label>

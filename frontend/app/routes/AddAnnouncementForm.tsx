@@ -80,9 +80,14 @@ export default function AddAnnouncementForm({ onAddAnnouncement }: AddAnnounceme
     <Form onSubmit={handleSubmit}>
       <Form.Group controlId="category" style={{ padding: "10px" }}>
         <Form.Label>Ilmoitusluokka</Form.Label>
-        <Form.Select aria-label="asiakastoive">
+        <Form.Select
+          name="category"
+          value={formData.category}
+          onChange={handleInputChange}
+          aria-label="Valitse ilmoitusluokka"
+        >
           <option value="asiakastoive">Asiakastoive</option>
-          <option value="myynti-ilmoitus" >Myynti-ilmoitus</option>
+          <option value="myynti-ilmoitus">Myynti-ilmoitus</option>
         </Form.Select>
       </Form.Group>
 
