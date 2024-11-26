@@ -22,10 +22,7 @@ export default function AdvertisementGrid({
     <div>
       {isAdmin ? (
         // Admin view Grid
-        <div
-          className="d-flex flex-wrap"
-          style={{ gap: "15px", justifyContent: "space-between" }}
-        >
+        <div className="d-flex flex-wrap" style={{ gap: "15px", justifyContent: "space-between" }}>
           {advertisements.map((ad) => (
             <Card
               key={ad.id}
@@ -38,7 +35,7 @@ export default function AdvertisementGrid({
             >
               <Card.Img
                 variant="top"
-                src={`data:image/jpeg;base64,${ad.file}`}
+                src={ad.file}
                 alt="Advertisement"
                 style={{ height: "150px", objectFit: "cover" }}
               />
@@ -64,14 +61,13 @@ export default function AdvertisementGrid({
           ))}
         </div>
       ) : (
-
         // Non-admin view Carousel
         <Carousel interval={3000} controls={false} indicators={false}>
           {advertisements.map((ad, index) => (
             <Carousel.Item key={ad.id}>
               <img
                 className="d-block w-100 carousel-image"
-                src={`data:image/jpeg;base64,${ad.file}`}
+                src={ad.file}
                 alt={`Advertisement ${index + 1}`}
               />
             </Carousel.Item>

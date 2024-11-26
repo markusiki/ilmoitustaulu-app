@@ -1,9 +1,10 @@
 import { useState, ChangeEvent, FormEvent } from "react";
 import { Form, Button } from "react-bootstrap";
+import resizeFile from "~/utils";
 
 interface IAdvertisement {
   id: string;
-  file: BinaryData;
+  file: string;
 }
 
 interface AddAdvertisementFormProps {
@@ -11,27 +12,18 @@ interface AddAdvertisementFormProps {
 }
 
 export default function AddAdvertisementForm({ onAddAdvertisement }: AddAdvertisementFormProps) {
-  const [file, setFile] = useState<BinaryData | null>(null);
+  const [file, setFile] = useState<IAdvertisement["file"] | null>(null);
 
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+  const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
+    const input = e.target as HTMLInputElement;
+    const file = input.files?.[0];
     if (file) {
-      const reader = new FileReader();
-  
-      reader.onload = () => {
-        if (reader.result) {
-          setFile(reader.result.toString().split(",")[1]);
-        }
-      };
-  
-      reader.onerror = () => {
-        console.error("Failed to read file");
-        setFile(undefined);
-      };
-  
-      reader.readAsDataURL(file);
-    } else {
-      setFile(undefined);
+      try {
+        const image = await resizeFile(file, 800);
+        setFile(image as string);
+      } catch (err) {
+        console.log(err);
+      }
     }
   };
 

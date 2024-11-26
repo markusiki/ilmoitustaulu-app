@@ -17,6 +17,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': 'http://localhost:5000',
+      '/new': 'http://localhost:5000',
       '/announcements': {
         target: 'ws://localhost:5000/announcements',
         ws: true,
