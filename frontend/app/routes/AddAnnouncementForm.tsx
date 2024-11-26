@@ -1,5 +1,6 @@
 import { useState, ChangeEvent, FormEvent } from "react";
 import { Form, Button } from "react-bootstrap";
+import resizeFile from "~/utils";
 
 interface AnnouncementFormData {
   category: "asiakastoive" | "myynti-ilmoitus";
@@ -7,7 +8,7 @@ interface AnnouncementFormData {
   contact_info: string;
   title: string;
   content: string;
-  file?: BinaryData;
+  file?: string;
 }
 
 interface AddAnnouncementFormProps {
@@ -32,34 +33,16 @@ export default function AddAnnouncementForm({ onAddAnnouncement }: AddAnnounceme
     }));
   };
 
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+  const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
+    const input = e.target as HTMLInputElement;
+    const file = input.files?.[0];
     if (file) {
-      const reader = new FileReader();
-  
-      reader.onload = () => {
-        if (reader.result) {
-          setFormData((prevData) => ({
-            ...prevData,
-            file: reader.result.toString().split(",")[1],
-          }));
-        }
-      };
-  
-      reader.onerror = () => {
-        console.error("Failed to read file");
-        setFormData((prevData) => ({
-          ...prevData,
-          file: undefined,
-        }));
-      };
-  
-      reader.readAsDataURL(file); // Lue tiedosto Base64-muodossa
-    } else {
-      setFormData((prevData) => ({
-        ...prevData,
-        file: undefined,
-      }));
+      try {
+        const image = await resizeFile(file);
+        setFormData((prevData) => ({ ...prevData, file: image as string }));
+      } catch (err) {
+        console.log(err);
+      }
     }
   };
 
@@ -141,12 +124,7 @@ export default function AddAnnouncementForm({ onAddAnnouncement }: AddAnnounceme
 
       <Form.Group controlId="file" style={{ padding: "10px" }}>
         <Form.Label>Liitä tiedosto (valinnainen)</Form.Label>
-        <Form.Control
-          type="file"
-          name="file"
-          accept="image/*"
-          onChange={handleFileChange}
-        />
+        <Form.Control type="file" name="file" accept="image/*" onChange={handleFileChange} />
       </Form.Group>
 
       <Button variant="primary" type="submit" className="mt-3" style={{ margin: "10px" }}>
