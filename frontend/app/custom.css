@@ -114,13 +114,13 @@ button:hover {
   font-size: 1.2rem; /* Adjust font size to fit within the box */
   font-weight: bold; /* Make text bold */
   color: #ffffff; /* White text color */
-  background-color: #41414191; /* Background color */
+  background-color: #878787; /* Background color */
   width: 150px; /* Set width */
   height: 150px; /* Set height */
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 500px; /* Rounded corners */
+  border-radius: 5px; /* Rounded corners */
   text-align: center; /* Center text */
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Add shadow */
   margin-bottom: 20px; /* Add margin at the bottom */
@@ -135,6 +135,34 @@ button:hover {
   text-align: center; /* Center text */
 }
 
+/* Custom CSS class for carousel items */
+.carousel-item {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Add margin to the left of the QR code */
+.ml-3 {
+  margin-left: 1rem;
+}
+
+/* Arrow-shaped text pointing at the QR code */
+.arrow-text {
+  position: relative;
+  padding-right: 20px; /* Adjust padding to make space for the arrow */
+}
+
+.arrow-text::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: -20px; /* Adjust position to align with the text */
+  transform: translateY(-50%);
+  border: 10px solid transparent;
+  border-left-color: #878787; /* Match the background color of the text */
+}
+
 @media (max-width: 768px) {
   .section-title {
     font-size: 1.5rem;
@@ -143,6 +171,8 @@ button:hover {
 
   .qr-text {
     font-size: 1rem;
+    width: 100px;
+    height: 100px;
   }
 
   .card {

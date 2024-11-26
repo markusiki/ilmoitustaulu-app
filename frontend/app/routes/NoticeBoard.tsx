@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Container, Row, Col, Button, Modal, Form } from "react-bootstrap";
-import Section from "./Section";
+import { Container, Row, Col, Button, Modal } from "react-bootstrap";
 import AddAnnouncementForm from "./AddAnnouncementForm";
 import AddAdvertisementForm from "./AddAdvertisementForm";
 import AdvertisementGrid from "./AdvertisementGrid";
+import CustomCarousel from "./CustomCarousel"; // Import the custom carousel component
 import { QRCodeSVG } from "qrcode.react";
 import config from "../config";
 import { DataFromServer, IAdvertisement, IAnnouncement } from "../../interfaces";
@@ -21,18 +21,18 @@ export default function NoticeBoard() {
   const [isAdmin, setAdmin] = useState(false);
   const [isLoggedin, setIsLoggedin] = useState(false);
   const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
 
   const ws = useRef<WebSocket | null>(null);
 
   useEffect(() => {
-    ws.current = new WebSocket(`${config.ws_host}/announcements/`);
+    ws.current = new WebSocket(config.WS_URL + "announcements/");
     ws.current.onopen = () => {
       setStatus("Connected");
       console.log("Connected to WebSocket server");
     };
     ws.current.onmessage = (event) => {
       const data = JSON.parse(event.data);
+      console.log("Received data:", data); // Log data to confirm structure
       handleIncomingMessage(data);
     };
     ws.current.onclose = () => {
@@ -45,14 +45,14 @@ export default function NoticeBoard() {
     return () => {
       ws.current?.close();
     };
-  }, [isLoggedin]);
+  }, []);
 
   const handleIncomingMessage = (message: DataFromServer) => {
     console.log("Received data:", message); // Log data to confirm structure
     if (message.type === "initialdata") {
       setAnnouncements(message.data.announcements);
       setAdvertisements(message.data.advertisements);
-      setAnnouncementId(message.data.newAnnouncementId); // Use data.announcmentId as sent from backend
+      setAnnouncementId(message.data.newAnnouncmentId); // Use data.announcmentId as sent from backend
     }
     if (message.type === "advertisementadd") {
       setAdvertisements((prev) => [...prev, message.data.advertisement]);
@@ -80,55 +80,21 @@ export default function NoticeBoard() {
     }
   };
 
-  const handleDeleteAd = (id: string) => {
-    if (ws.current) {
-      const deleteMessage = {
-        type: "advertisementdelete",
-        id: id,
-      };
-      ws.current.send(JSON.stringify(deleteMessage));
-    }
-  };
-
-  const handleDeleteAnnouncement = (id: string) => {
-    if (ws.current) {
-      const deleteMessage = {
-        type: "announcementdelete",
-        id: id,
-      };
-      ws.current.send(JSON.stringify(deleteMessage));
-    }
-  };
-
-  const handleAddAdvertisement = (newAdvertisement: Omit<IAdvertisement, "id">) => {
-    if (ws.current) {
-      const advertisementMessage = {
-        type: "advertisementadd",
-        data: {
-          file: newAdvertisement.file,
-        },
-      };
-      console.log(newAdvertisement.file);
-      ws.current.send(JSON.stringify(advertisementMessage));
-      setIsAdModalOpen(false);
-    } else {
-      console.error("WebSocket-yhteyttä ei ole avoinna.");
-    }
-  };
-
   const handleAddAnnouncement = async (newAnnouncement: Omit<IAnnouncement, "id">) => {
-    console.log(newAnnouncement);
+    console.log("Using announcementId:", announcementId); // Log announcementId to confirm it's correct
     try {
-      const initResponse = await fetch(`/new/${announcementId}/`);
+      const initResponse = await fetch(`${config.HOST}new/${announcementId}/`);
       if (initResponse.ok) {
-        const response = await fetch(`/api/announcements/add/${announcementId}`, {
-          method: "POST",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(newAnnouncement),
-        });
+        const response = await fetch(
+          `${config.HOST}api/announcements/add/${announcementId}`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(newAnnouncement),
+          }
+        );
         if (response.ok) {
           console.log("Announcement saved and broadcasted.");
           setIsModalOpen(false);
@@ -146,168 +112,45 @@ export default function NoticeBoard() {
   const filterAnnouncementsByCategory = (category: string) =>
     announcements.filter((announcement) => announcement.category === category);
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    //setError(''); // Reset error message
-
-    try {
-      const response = await fetch("/api/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({ username, password }),
-      });
-
-      if (response.status !== 200) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Login failed");
-      }
-
-      const data: Response = await response.json();
-      setIsLoggedin(true);
-      console.log(data.role);
-
-      if (data.role == "admin") setAdmin(true);
-
-      console.log("Login successful:", data.message);
-    } catch (err) {
-      console.error("Login error:", err.message);
-    }
-  };
-
-  const handleLogout = () => {
-    setIsLoggedin(false);
-    // Lisää uloskirjautumislogiikka
-  };
-
-  if (!isLoggedin) {
-    return (
-      <Container className="mt-5">
-        <Row className="justify-content-md-center">
-          <Col xs={12} md={6}>
-            <h2 className="text-center mb-4">Kirjaudu sisään</h2>
-            <Form onSubmit={handleLogin}>
-              <Form.Group className="mb-3" controlId="formBasicEmail">
-                <Form.Label>Käyttätunnus</Form.Label>
-                <Form.Control
-                  type="username"
-                  placeholder="Syötä käyttätunnus"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                />
-              </Form.Group>
-
-              <Form.Group className="mb-3" controlId="formBasicPassword">
-                <Form.Label>Password</Form.Label>
-                <Form.Control
-                  type="password"
-                  placeholder="Syötä salasana"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-              </Form.Group>
-
-              <div className="d-grid gap-2">
-                <Button variant="primary" type="submit" size="lg">
-                  Kirjaudu sisään
-                </Button>
-              </div>
-            </Form>
-          </Col>
-        </Row>
-      </Container>
-    );
-  }
-
   return (
     <Container fluid>
-      { /* <h1 className="custom-header text-center mb-4">Ilmoitustaulu</h1> */ }
-
-      {isAdmin ? (
-        <div className="text-center mt-4" style={{ justifyContent: "right", display: "flex" }}>
-          <Button
-            variant="secondary"
-            onClick={() => setIsAdModalOpen(true)}
-            style={{ margin: "5px" }}
-          >
-            Lisää Mainos
-          </Button>
-          <Button
-            variant="secondary"
-            onClick={() => setIsModalOpen(true)}
-            style={{ margin: "5px" }}
-          >
-            Lisää Ilmoitus
-          </Button>
-          <Button variant="secondary" onClick={() => handleLogout()} style={{ margin: "5px" }}>
-            Kirjaudu ulos
-          </Button>
-        </div>
-      ) : null}
-
-
-      <Row c  className="mb-4 justify-content-center align-items-center"
-  style={{
-    paddingTop: "20px",
-    height: "100%", // Ensure it takes available space
-  }}
->
-  <Col
-    md={4}
-    className="d-flex flex-column justify-content-center align-items-center"
-    style={{ height: "100%" }} // Ensure the content aligns within its column
-  >
-    <div className="w-100 mb-4" style={{ paddingTop: "15px" }}>
-      <AdvertisementGrid
-        advertisements={advertisements}
-        isAdmin={isAdmin}
-        onDelete={handleDeleteAd}
-      />
-    </div>
-    {!isAdmin ? (
-      <div
-        className="d-flex align-items-center"
-        style={{
-          width: "100%",
-          paddingTop: "50px",
-          justifyContent: "center",
-        }}
-      >
-        <p className="qr-text text-center mb-3 font-weight-bold">
-          Lisää oma ilmoituksesi QR-koodilla
-        </p>
-        <QRCodeSVG value={`${config.host}/new/${announcementId}/`} size={200} />
-      </div>
-    ) : null}
-  </Col>
-
-        <Col md={8}> 
-          <Row className="d-flex flex-column align-items-center justify-content-center">
-            <Col xs={12} className="my-4">
-              <Section
-                title="Myynti-ilmoitukset"
-                announcements={filterAnnouncementsByCategory("myynti-ilmoitus")}
-                //announcements={filterAnnouncementsByCategory("asiakastoive")}
-                isAdmin={isAdmin}
-                onDelete={handleDeleteAnnouncement}
-              />
-            </Col>
-            <Col xs={12}>
-              <Section
-                title="Asiakastoiveet"
-                announcements={filterAnnouncementsByCategory("asiakastoive")}
-                isAdmin={isAdmin}
-                onDelete={handleDeleteAnnouncement}
-              />
-            </Col>
-          </Row>
+      <h1 className="custom-header text-center mb-4">Ilmoitustaulu</h1>
+      <Row className="mb-4">
+        <Col md={4}>
+          <AdvertisementGrid advertisements={advertisements} />
+        </Col>
+        <Col md={8}>
+          <CustomCarousel
+            announcements={filterAnnouncementsByCategory("myynti-ilmoitus")}
+            itemsPerSlide={8}
+            isAdmin={isAdmin}
+            onDelete={(id) => console.log(`Delete announcement with id: ${id}`)}
+          />
         </Col>
       </Row>
-
-
-
+      <Row>
+        <Col md={4} className="d-flex flex-column align-items-center justify-content-center">
+          <div className="d-flex align-items-center">
+            <p className="qr-text arrow-text text-center mr-3" style={{ width: 150 }}>
+              Lisää oma ilmoituksesi skannaamalla QR-koodi
+            </p>
+            <QRCodeSVG value={`${config.HOST}new/${announcementId}/`} size={150} className="ml-3" />
+          </div>
+        </Col>
+        <Col md={8}>
+          <CustomCarousel
+            announcements={filterAnnouncementsByCategory("asiakastoive")}
+            itemsPerSlide={4}
+            isAdmin={isAdmin}
+            onDelete={(id) => console.log(`Delete announcement with id: ${id}`)}
+          />
+        </Col>
+      </Row>
+      <div className="text-center mt-4">
+        <Button variant="primary" onClick={() => setIsModalOpen(true)}>
+          Add New Announcement
+        </Button>
+      </div>
       <Modal show={isModalOpen} onHide={() => setIsModalOpen(false)} centered>
         <Modal.Header closeButton>
           <Modal.Title>Lisää uusi ilmoitus</Modal.Title>

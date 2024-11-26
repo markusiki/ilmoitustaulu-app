@@ -53,10 +53,10 @@ export default function Notice({
 
       <Card.Body style={{ display: "flex", flexDirection: "row" }}>
         <div style={{ flex: 2, paddingRight: "10px" }}>
-          <p style={{ marginBottom: "5px" }}>Ilmoittaja: {poster}</p>
+          <p style={{ marginBottom: "5px" }}> {poster}</p>
           {contact_info && (
             <>
-              <p style={{ marginBottom: "5px" }}>Yhteystiedot: {contact_info}</p>
+              <p style={{ marginBottom: "5px" }}> {contact_info}</p>
             </>
           )}
           <p style={{ fontWeight: "bold", fontSize: "18px", marginBottom: "10px" }}>{title}</p>
