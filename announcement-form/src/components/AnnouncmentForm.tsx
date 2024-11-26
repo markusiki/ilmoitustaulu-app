@@ -1,6 +1,7 @@
 import { useState, ChangeEvent, FormEvent } from 'react'
 import { Form, Button, Container, Row, Col } from 'react-bootstrap'
 import { AnnouncementFormProps, IAnnouncement } from '../../interfaces'
+import Resizer from 'react-image-file-resizer'
 
 const AnnouncementForm: React.FC<AnnouncementFormProps> = ({
   handleNewAnnouncement
@@ -11,44 +12,45 @@ const AnnouncementForm: React.FC<AnnouncementFormProps> = ({
     contact_info: '',
     title: '',
     content: '',
-    file: undefined
+    file: ''
   })
 
   const handleInputChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
-    const { name, value } = e.target;
+    const { name, value } = e.target
     setFormData((prevData) => ({
       ...prevData,
-      [name]: value,
-    }));
-  };
+      [name]: value
+    }))
+  }
 
-  const handleImageAdd = (event: ChangeEvent<HTMLInputElement>) => {
+  const resizeFile = (image: File) =>
+    new Promise((resolve) => {
+      Resizer.imageFileResizer(
+        image,
+        300,
+        300,
+        'JPEG',
+        80,
+        0,
+        (resizedImage) => {
+          resolve(resizedImage)
+        },
+        'base64'
+      )
+    })
+
+  const handleImageAdd = async (event: ChangeEvent<HTMLInputElement>) => {
     const input = event.target as HTMLInputElement
-    console.log(input)
-    const image = input.files?.[0]
-    if (image) {
-      const reader = new FileReader()
-      reader.onload = (event: ProgressEvent<FileReader>) => {
-        const result = event.target?.result
-        if (result) {
-          const blob = new Blob([result])
-          const blobReader = new FileReader()
-          blobReader.onload = () => {
-            const base64String = (blobReader.result as string).split(',')[1]
-            setFormData((prevData) => ({
-              ...prevData,
-              file: base64String
-            }))
-            console.log(base64String)
-          }
-          blobReader.readAsDataURL(blob)
-        }
+    const file = input.files?.[0]
+    if (file) {
+      try {
+        const image = await resizeFile(file)
+        setFormData((prevData) => ({ ...prevData, file: image as string }))
+      } catch (err) {
+        console.log(err)
       }
-      reader.readAsArrayBuffer(image)
-    } else {
-      console.log('No file selected')
     }
   }
 
@@ -140,18 +142,14 @@ const AnnouncementForm: React.FC<AnnouncementFormProps> = ({
               />
             </Form.Group>
 
-            <Button
-              variant="primary"
-              type="submit"
-              className="mt-4 w-100"
-            >
+            <Button variant="primary" type="submit" className="mt-4 w-100">
               Lähetä
             </Button>
           </Form>
         </Col>
       </Row>
     </Container>
-  );
-};
+  )
+}
 
-export default AnnouncementForm;
+export default AnnouncementForm
