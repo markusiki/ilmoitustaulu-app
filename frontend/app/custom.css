@@ -123,7 +123,7 @@ button:hover {
   border-radius: 500px; /* Rounded corners */
   text-align: center; /* Center text */
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Add shadow */
-  margin-bottom: 20px; /* Add margin at the bottom */
+  margin: 20px; /* Add margin */
 }
 
 /* Custom CSS class for section titles */
