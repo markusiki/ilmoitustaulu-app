@@ -8,9 +8,9 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "../custom.css";
 
 interface AdvertisementGridProps {
-  advertisements: IAdvertisement[] | { id: number; file: string }[];
+  advertisements: IAdvertisement[];
   isAdmin?: boolean;
-  onDelete?: (id: number) => void;
+  onDelete?: (id: string) => void;
 }
 
 export default function AdvertisementGrid({
