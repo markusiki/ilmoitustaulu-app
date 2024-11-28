@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, FormEvent } from "react";
 import { Container, Row, Col, Button, Modal, Form } from "react-bootstrap";
 import Section from "./Section";
 import AddAnnouncementForm from "./AddAnnouncementForm";
@@ -6,7 +6,7 @@ import AddAdvertisementForm from "./AddAdvertisementForm";
 import AdvertisementGrid from "./AdvertisementGrid";
 import { QRCodeSVG } from "qrcode.react";
 import config from "../config";
-import { DataFromServer, IAdvertisement, IAnnouncement } from "../../interfaces";
+import { DataFromServer, IAdvertisement, IAnnouncement, CustomResponse } from "../../interfaces";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../custom.css";
 
@@ -146,7 +146,7 @@ export default function NoticeBoard() {
   const filterAnnouncementsByCategory = (category: string) =>
     announcements.filter((announcement) => announcement.category === category);
 
-  const handleLogin = async (e) => {
+  const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     //setError(''); // Reset error message
 
@@ -165,14 +165,14 @@ export default function NoticeBoard() {
         throw new Error(errorData.error || "Login failed");
       }
 
-      const data: Response = await response.json();
+      const data: CustomResponse = await response.json();
       setIsLoggedin(true);
       console.log(data.role);
 
       if (data.role == "admin") setAdmin(true);
 
       console.log("Login successful:", data.message);
-    } catch (err) {
+    } catch (err: any) {
       console.error("Login error:", err.message);
     }
   };
@@ -223,8 +223,6 @@ export default function NoticeBoard() {
 
   return (
     <Container fluid>
-      { /* <h1 className="custom-header text-center mb-4">Ilmoitustaulu</h1> */ }
-
       {isAdmin ? (
         <div className="text-center mt-4" style={{ justifyContent: "right", display: "flex" }}>
           <Button
@@ -245,53 +243,56 @@ export default function NoticeBoard() {
             Kirjaudu ulos
           </Button>
         </div>
-      ) : null}
+      ) : (
+        <h1 className="custom-header text-center">Ilmoitustaulu</h1>
+      )}
 
-
-      <Row c  className="mb-4 justify-content-center align-items-center"
-  style={{
-    paddingTop: "20px",
-    height: "100%", // Ensure it takes available space
-  }}
->
-  <Col
-    md={4}
-    className="d-flex flex-column justify-content-center align-items-center"
-    style={{ height: "100%" }} // Ensure the content aligns within its column
-  >
-    <div className="w-100 mb-4" style={{ paddingTop: "15px" }}>
-      <AdvertisementGrid
-        advertisements={advertisements}
-        isAdmin={isAdmin}
-        onDelete={handleDeleteAd}
-      />
-    </div>
-    {!isAdmin ? (
-      <div
-        className="d-flex align-items-center"
+      <Row
+        c
+        className="mb-4 justify-content-center align-items-center"
         style={{
-          width: "100%",
-          paddingTop: "50px",
-          justifyContent: "center",
+          paddingTop: "20px",
+          height: "100%", // Ensure it takes available space
         }}
       >
-        <p className="qr-text text-center mb-3 font-weight-bold">
-          Lisää oma ilmoituksesi QR-koodilla
-        </p>
-        <QRCodeSVG value={`${config.host}/new/${announcementId}/`} size={200} />
-      </div>
-    ) : null}
-  </Col>
+        <Col
+          md={4}
+          className="d-flex flex-column justify-content-center align-items-center"
+          style={{ height: "100%" }} // Ensure the content aligns within its column
+        >
+          <div className="w-100 mb-4" style={{ paddingTop: "15px" }}>
+            <AdvertisementGrid
+              advertisements={advertisements}
+              isAdmin={isAdmin}
+              onDelete={handleDeleteAd}
+            />
+          </div>
+          {!isAdmin ? (
+            <div
+              className="d-flex align-items-center"
+              style={{
+                width: "100%",
+                paddingTop: "50px",
+                justifyContent: "center",
+              }}
+            >
+              <p className="qr-text text-center mb-3 font-weight-bold">
+                Lisää oma ilmoituksesi QR-koodilla
+              </p>
+              <QRCodeSVG value={`${config.host}/new/${announcementId}/`} size={200} />
+            </div>
+          ) : null}
+        </Col>
 
-        <Col md={8}> 
+        <Col md={8}>
           <Row className="d-flex flex-column align-items-center justify-content-center">
             <Col xs={12} className="my-4">
               <Section
                 title="Myynti-ilmoitukset"
                 announcements={filterAnnouncementsByCategory("myynti-ilmoitus")}
-                //announcements={filterAnnouncementsByCategory("asiakastoive")}
                 isAdmin={isAdmin}
                 onDelete={handleDeleteAnnouncement}
+                itemsPerSlide={8}
               />
             </Col>
             <Col xs={12}>
@@ -300,13 +301,12 @@ export default function NoticeBoard() {
                 announcements={filterAnnouncementsByCategory("asiakastoive")}
                 isAdmin={isAdmin}
                 onDelete={handleDeleteAnnouncement}
+                itemsPerSlide={8}
               />
             </Col>
           </Row>
         </Col>
       </Row>
-
-
 
       <Modal show={isModalOpen} onHide={() => setIsModalOpen(false)} centered>
         <Modal.Header closeButton>
