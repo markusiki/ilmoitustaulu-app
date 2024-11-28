@@ -5,7 +5,7 @@ export interface IAnnouncement {
   contact_info?: string;
   title: string;
   content: string;
-  file?: BinaryData;
+  file?: string;
 }
 
 export interface IAdvertisement {
@@ -29,4 +29,9 @@ export interface DataFromServer {
     newAnnouncementId: string;
     id: string;
   };
+}
+
+export interface CustomResponse extends Response {
+  role: "admin" | "client"
+  message: string
 }
