@@ -135,7 +135,7 @@ export const handleNewAnnoucement = async (
         }
       }
       sendContentToAllClients(announcementToSend)
-      return { message: 'Announcement saved and published succesfully' }
+      return { message: 'Ilmoitus tallennettu ja julkaistu onnistuneesti!' }
     } else {
       await newAnnouncement.save()
       const isPublished = await handleAnnouncementsChange(
@@ -144,8 +144,8 @@ export const handleNewAnnoucement = async (
       console.log('published', isPublished)
       return {
         message: isPublished
-          ? 'Announcement saved and published succesfully'
-          : 'Announcement saved succesfully and put to queue'
+          ? 'Ilmoitus tallennettu ja julkaistu onnistuneesti!'
+          : `Ilmoitus tallennettu ja laitettu jonoon!`
       }
     }
   } catch (error) {

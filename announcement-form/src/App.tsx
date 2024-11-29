@@ -1,8 +1,9 @@
 import React, { useState } from 'react'
 import { IAnnouncement } from '../interfaces'
 import sendAnnouncement from './services/annoucement'
-import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/css/bootstrap.min.css'
 import AnnouncmentForm from './components/AnnouncmentForm'
+import './styles.css'
 
 const App = () => {
   const [isSent, setIsSent] = useState(false)
@@ -26,7 +27,9 @@ const App = () => {
       {!isSent ? (
         <AnnouncmentForm handleNewAnnouncement={handleNewAnnouncement} />
       ) : (
-        <p>{message}</p>
+        <div className="message">
+          <p>{message}</p>
+        </div>
       )}
     </>
   )
