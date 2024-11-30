@@ -47,10 +47,11 @@ The purpose of this project is to replace the traditional announcement board wit
 
 ### Running the Application
 
-1. Start the backend server:
+1. Start the backend server and build announcment-form:
 
    ```sh
    cd backend
+   npm run build:form
    npm run dev
    ```
 
@@ -59,12 +60,6 @@ The purpose of this project is to replace the traditional announcement board wit
    ```sh
    cd ../frontend
    npm run dev
-   ```
-
-3. Start the announcement form development server:
-   ```sh
-   cd ../announcement-form
-   npm start
    ```
 
 ### Building for Production
