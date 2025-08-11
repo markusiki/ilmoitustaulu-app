@@ -29,7 +29,6 @@ export default function NoticeBoard() {
     ws.current = new WebSocket(`${config.ws_host}/announcements/`);
     ws.current.onopen = () => {
       setStatus("Connected");
-      console.log("Connected to WebSocket server");
     };
     ws.current.onmessage = (event) => {
       const data = JSON.parse(event.data);
@@ -37,7 +36,6 @@ export default function NoticeBoard() {
     };
     ws.current.onclose = () => {
       setStatus("Disconnected");
-      console.log("Disconnected from WebSocket server");
     };
     ws.current.onerror = (error) => {
       console.error("WebSocket error:", error);
@@ -48,7 +46,6 @@ export default function NoticeBoard() {
   }, [isLoggedin]);
 
   const handleIncomingMessage = (message: DataFromServer) => {
-    console.log("Received data:", message); // Log data to confirm structure
     if (message.type === "initialdata") {
       setAnnouncements(message.data.announcements);
       setAdvertisements(message.data.advertisements);
@@ -108,7 +105,6 @@ export default function NoticeBoard() {
           file: newAdvertisement.file,
         },
       };
-      console.log(newAdvertisement.file);
       ws.current.send(JSON.stringify(advertisementMessage));
       setIsAdModalOpen(false);
     } else {
@@ -117,7 +113,6 @@ export default function NoticeBoard() {
   };
 
   const handleAddAnnouncement = async (newAnnouncement: Omit<IAnnouncement, "id">) => {
-    console.log(newAnnouncement);
     try {
       const initResponse = await fetch(`/new/${announcementId}/`);
       if (initResponse.ok) {
@@ -130,7 +125,6 @@ export default function NoticeBoard() {
           body: JSON.stringify(newAnnouncement),
         });
         if (response.ok) {
-          console.log("Announcement saved and broadcasted.");
           setIsModalOpen(false);
         } else {
           console.error("Error saving announcement:", response.statusText);
@@ -167,14 +161,11 @@ export default function NoticeBoard() {
 
       const data: CustomResponse = await response.json();
       setIsLoggedin(true);
-      console.log(data.role);
-
       if (data.role == "admin") {
         setAdmin(true);
       } else {
         setAdmin(false);
       }
-      console.log("Login successful:", data.message);
     } catch (err: any) {
       console.error("Login error:", err.message);
     }

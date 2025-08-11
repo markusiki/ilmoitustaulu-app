@@ -44,7 +44,6 @@ export default function AdvertisementGrid({
                   variant="danger"
                   size="sm"
                   onClick={() => {
-                    console.log("Delete button clicked for ad ID:", ad.id);
                     onDelete(ad.id);
                   }}
                   style={{
