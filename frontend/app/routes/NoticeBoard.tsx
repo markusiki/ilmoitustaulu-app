@@ -169,8 +169,11 @@ export default function NoticeBoard() {
       setIsLoggedin(true);
       console.log(data.role);
 
-      if (data.role == "admin") setAdmin(true);
-
+      if (data.role == "admin") {
+        setAdmin(true);
+      } else {
+        setAdmin(false);
+      }
       console.log("Login successful:", data.message);
     } catch (err: any) {
       console.error("Login error:", err.message);
